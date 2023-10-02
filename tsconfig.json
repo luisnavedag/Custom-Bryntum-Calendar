@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ESnext",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "./dist/"
+  },
+  "include": [
+    "src"
+  ]
+}
