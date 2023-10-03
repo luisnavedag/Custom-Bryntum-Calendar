@@ -1,0 +1,52 @@
+.b-overflowpopup {
+    min-width : 13em;
+    max-width : 30em;
+    z-index   : 20;
+
+    // Enable it to escape the Calendar element bounds to behave like a floater
+    // even though it's rendered into the Calendar for navigation to work.
+    position  : fixed!important;
+
+    // Bar container must accommodate all. Popup's body handles overflow.
+    .b-cal-event-bar-container {
+        flex : 0 0 auto;
+    }
+
+    .b-cal-event-wrap {
+        flex-shrink : 0;
+    }
+}
+
+.b-overflowpopup-body-wrap {
+    background-color: $panel-background-color;
+}
+
+.b-overflowpopup-content {
+    padding : 0;
+    margin  : $panel-content-padding;
+
+    // If there's a scrollbar at the inline-end, we don't need a margin.
+    &.b-vertical-overflow {
+        .b-visible-scrollbar & {
+            margin-inline-end: 0;
+        }
+    }
+}
+
+.b-overflowpopup-header {
+    border-top-left-radius  : $overflow-popup-border-radius;
+    border-top-right-radius : $overflow-popup-border-radius;
+}
+
+// Nesting required to win over other bundle themes
+// https://github.com/bryntum/support/issues/2820
+.b-daycellcollecter .b-overflowpopup-content {
+    contain     : style!important;
+    flex-flow   : column nowrap;
+    align-items : stretch;
+
+    .b-cal-event-wrap {
+        flex-shrink : 0;
+        position    : relative!important;
+    }
+}

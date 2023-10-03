@@ -1,0 +1,12 @@
+.b-resourcechipview {
+
+    display   : flex;
+    flex-flow : row wrap;
+
+    .b-chip {
+        gap                  : 0.5em;
+        border-radius        : $avatar-size + $chip-padding-block;
+        padding-inline-start : $chip-padding-block;
+        white-space          : nowrap;
+    }
+}

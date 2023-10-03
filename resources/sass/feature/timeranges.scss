@@ -1,0 +1,157 @@
+@import '../../sass/variables';
+@import '../../core-sass/functions';
+
+.b-dayview {
+    .b-cal-timerange {
+        position       : absolute;
+        display        : flex;
+        flex-direction : column;
+        overflow       : hidden;
+        left           : 0;
+        right          : 0;
+
+        --timerange-color : var(--cal-event-color);
+        --timerange-footer-color : #{$cal-timerange-footer-color};
+        --timerange-border-size : 0.15em;
+        --timerange-line-size : 0.2em;
+        --timerange-line-zoom-scale : 2;
+
+        &.b-cal-timerange-line {
+            border-color      : var(--timerange-color);
+            border-width      : calc(var(--timerange-line-size)) 0 0 0;
+            border-style      : solid;
+            min-height        : calc(var(--timerange-line-size));
+            margin-inline-end : calc(-1 * var(--dayview-cell-gutter));
+            transition        : transform 0.3s ease-in-out;
+            z-index           : 1;
+
+            &.b-cal-timerange-hover-zoom:hover {
+                transform : scale(var(--timerange-line-zoom-scale));
+            }
+        }
+
+        &.b-cal-timerange-has-header {
+            &::after {
+                content          : " ";
+                background-color : var(--timerange-color);
+                position         : absolute;
+                top              : 0;
+                width            : calc(var(--timerange-border-size));
+                bottom           : 0;
+                opacity          : 0.5;
+            }
+
+            &.b-cal-timerange-align-end.b-cal-timerange-rotate-pos,
+            &.b-cal-timerange-align-start.b-cal-timerange-rotate-neg {
+                &::after {
+                    right : 0;
+                }
+            }
+
+            &.b-cal-timerange-align-end.b-cal-timerange-rotate-neg,
+            &.b-cal-timerange-align-start.b-cal-timerange-rotate-pos {
+                &::after {
+                    left : 0;
+                }
+            }
+        }
+
+        .b-cal-timerange-body {
+            width          : 100%;
+            pointer-events : none;
+            z-index        : -1;   // ensure body does not cover overlapping header on opposite side inset
+        }
+
+        .b-cal-timerange-header,
+        .b-cal-timerange-footer {
+            display         : flex;
+            align-items     : center;
+            justify-content : center;
+        }
+
+        //.b-cal-timerange-header:hover {
+        //    background-color : $dayview-event-hover-body-background-color;
+        //}
+
+        .b-cal-timerange-header {
+            background-color : $dayview-event-body-background-color;
+            transition       : background-color 0.1s;
+            position         : relative;
+            width            : var(--timerange-header-width);
+
+            &::after {
+                content          : " ";
+                background-color : var(--timerange-color);
+                position         : absolute;
+                left             : 0;
+                top              : 0;
+                right            : 0;
+                bottom           : 0;
+                z-index          : -1;
+            }
+
+            &.b-icon .b-cal-timerange-header-text {
+                margin-inline-start : 0.5em;
+            }
+        }
+
+        //.b-cal-timerange-footer {
+        //    background-color : var(--timerange-footer-color);
+        //    width            : var(--timerange-footer-width);
+        //}
+
+        &:not(.b-cal-timerange-narrow) {
+            .b-cal-timerange-header-text {
+                font-size : 0.9em;
+            }
+        }
+    }
+
+    .b-cal-timerange-rotate-neg {
+        align-self     : center;
+        writing-mode   : vertical-lr;
+        transform      : rotate(180deg);
+
+        .b-cal-timerange-header::before {
+            // Icon has to be rotated back upright
+            transform : rotate(180deg);
+        }
+    }
+
+    .b-cal-timerange-rotate-pos {
+        align-self     : center;
+        writing-mode   : vertical-rl;
+    }
+
+    .b-cal-timerange-align-start {
+        flex-direction : column-reverse;
+    }
+
+    // Prevents body from overlapping headers in opposite inset zone
+    .b-dayview-inset-after.b-dayview-inset-before {
+        .b-cal-timerange-has-header:not(.b-cal-timerange-stretch) {
+            .b-cal-timerange-body {
+                width : calc(100% - 2 * var(--dayview-cell-inset-size));
+            }
+        }
+    }
+
+    .b-dayview-inset-after:not(.b-dayview-inset-before),
+    .b-dayview-inset-before:not(.b-dayview-inset-after) {
+        .b-cal-timerange-has-header:not(.b-cal-timerange-stretch) {
+            .b-cal-timerange-body {
+                width : calc(100% - var(--dayview-cell-inset-size));
+            }
+        }
+    }
+
+    .b-cal-timerange:not(.b-cal-timerange-line):not(.b-cal-timerange-has-header):not(.b-cal-timerange-stretch) {
+        .b-dayview-inset-after & {
+            margin-block-end : calc(var(--dayview-cell-inset-size));
+        }
+
+        .b-dayview-inset-before & {
+            margin-block-start : calc(var(--dayview-cell-inset-size));
+        }
+    }
+}

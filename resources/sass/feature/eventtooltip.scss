@@ -1,0 +1,26 @@
+.b-cal-tooltip-duration,
+.b-cal-tooltip-recurrence {
+    margin-top: 0.5em;
+
+    &:before {
+        margin-inline-end : .5em;
+        width             : 1.5em;
+        text-align        : center;
+    }
+}
+
+.b-eventtip {
+    .b-sch-clock {
+        border-color : $tooltip-background-color;
+    }
+
+    .b-tooltip-content {
+        display   : flex;
+        flex-flow : column nowrap;
+        gap       : 0.3em;
+
+        > * {
+            margin-block: 0;
+        }
+    }
+}

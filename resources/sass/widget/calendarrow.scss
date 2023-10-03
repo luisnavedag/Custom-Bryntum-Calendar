@@ -1,0 +1,232 @@
+@import '../variables';
+
+.b-calendarrow {
+    // No transition when initializing as the "all day" section of a DayView
+    &.b-animating:not(.b-dayview-initializing) {
+        .b-calendarrow-cell-container {
+            transition : height $dayview-allday-height-transition-duration;
+        }
+    }
+
+    display          : flex;
+    flex-flow        : column nowrap;
+    align-items      : stretch;
+    overflow         : hidden;
+    flex             : 1 0 0%;
+    background-color : $monthview-background-color;
+
+    // These two main elements contain the elements which provide scroll.
+    // They must autoHeight to shrinkwrap content.
+    .b-calendarrow-header, .b-calendarrow-body {
+        flex      : 0 0 auto;
+        display   : flex;
+        flex-flow : row nowrap;
+    }
+
+    // Must flex to fit in the CalendarRow's height.
+    // Contains scrollable content - overflow controlled by widget's Scroller.
+    .b-calendarrow-body {
+        flex     : 1 1 0%;
+        overflow : hidden;
+
+        &.b-zero-height {
+            max-height : 0px;
+        }
+        &:not(.b-zero-height) {
+            // Give the cell container a border at the top to "scroll against".
+            // It looks odd scrolling off the top with no border.
+            border-top : 1px solid $calendar-border-color;
+        }
+    }
+
+    .b-calendarrow-header-container, .b-calendarrow-cell-container {
+        flex        : 1 0 0%;
+        display     : flex;
+        flex-flow   : row nowrap;
+        align-items : stretch;
+        overflow    : hidden;
+    }
+
+    // This becomes the offsetParent of event bars so that %age widths based upon how many
+    // days cells are spanned works, and no layout has to be done on width change.
+    // Position important as this flex now overrides the default applied in the shared ruleset above.
+    // The cell container must contain vertical scrolling.
+    .b-calendarrow-cell-container {
+        // Event bars must use this as their offsetParent and calculate their %age width using this element.
+        position : relative;
+
+        // Needed to make sure it shrinkwraps the width of the cells and does *not* flex down
+        // to fit in the bodyElement when there's a minDayWidth. The bodyElement has to scroll it
+        // in this case. CalendarRow sets --cell-container-overflow to 'visible' when minDayWidth is set.
+        overflow : var(--cell-container-overflow, hidden);
+    }
+
+    .b-cal-cell-header {
+        padding         : $calendar-view-padding-top 0 .2em;
+        justify-content : center;
+        align-items     : center;
+        overflow        : hidden;
+        text-overflow   : ellipsis;
+        white-space     : nowrap;
+
+        background-color : $monthview-background-color;
+
+        // This kind of view doesn't show the week.
+        .b-week-num {
+            display : none;
+        }
+
+        cursor : pointer;
+
+        &:hover {
+            .b-day-name-date {
+                background-color : $calendar-date-hover-background-color;
+            }
+        }
+
+        // During dragging, override the hovered effect in the cell header.
+        .b-draggable-started & {
+            &:hover {
+                .b-day-name-date {
+                    background-color : initial;
+                }
+            }
+        }
+
+        .b-day-name-day {
+            font-size     : .8em;
+            margin-bottom : .2em;
+
+            &.b-day-name-short {
+                font-size : 1.1em;
+            }
+        }
+
+        .b-day-name-date {
+            font-size       : 1.8em;
+            border-radius   : 50%;
+            width           : 1.8em;
+            height          : 1.8em;
+            display         : flex;
+            align-items     : center;
+            justify-content : center;
+            margin          : 0.1em 0 0.2em 0;
+            transition      : background-color 0.4s;
+            .b-no-transitions & {
+                transition : none;
+            }
+        }
+
+        &.b-weekend .b-day-name-part {
+            color : $monthview-header-cell-weekend-color;
+        }
+
+        &.b-current-date {
+            .b-day-name-date {
+                color            : $datepicker-selected-cell-color;
+                background-color : $datepicker-selected-cell-background-color;
+            }
+
+            &:hover .b-day-name-date {
+                color            : $datepicker-hover-cell-color;
+                background-color : $datepicker-hover-cell-background-color;
+                border-color     : $datepicker-hover-cell-border-color;
+            }
+        }
+
+        &.b-today {
+            .b-day-name-date {
+                background-color : $calendar-today-background-color;
+                color            : $calendar-today-color;
+            }
+
+            &:hover .b-day-name-date {
+                background-color : $calendar-today-hover-background-color;
+            }
+        }
+    }
+
+    // Day numbers will be 00-00 form, so needs to be oval, not circle.
+    &.b-shifted-day {
+        .b-day-name-date {
+            width : 3em;
+        }
+    }
+
+    // If the all day events are not shown (which carry inter-cell borders) apply borders
+    // to the date cells.
+    &.b-hide-allday-header {
+        .b-cal-cell-header:not(:last-child) {
+            border-inline-end : $monthview-cell-border-width solid $monthview-border-color;
+        }
+    }
+
+    .b-cal-cell-header, .b-calendar-cell {
+        // Must exactly match flex of DayView's .b-calendar-cell
+        flex      : 1 1 100%;
+
+        min-width : var(--min-day-width, 0);
+
+        //border-top      : $monthview-cell-border-width solid $monthview-border-color;
+        //border-right    : $monthview-cell-border-width solid $monthview-border-color;
+        color     : $monthview-cell-color;
+        display   : flex;
+        flex-flow : column nowrap;
+    }
+
+    .b-calendar-cell {
+        &.b-nonworking-day {
+            background-color : $monthview-nonworking-day-background-color;
+        }
+        &.b-weekend {
+            color : $monthview-cell-weekend-color;
+        }
+
+        // The .b-cal-cell-header must overflow to hide the right border
+        overflow  : visible;
+
+        &.b-today {
+            .b-day-num {
+                border-radius    : 50%;
+                background-color : $monthview-today-daynum-background-color;
+                color            : $monthview-today-daynum-color;
+                font-weight      : $monthview-today-daynum-font-weight;
+            }
+        }
+
+        &.b-nonworking-day {
+            .b-cal-event-bar-container {
+                background-color : $calendarrow-nonworking-day-background-color;
+            }
+        }
+
+        // Event cells carry the right border.
+        // Except the last cell. The widget has borders.
+        &:not(:last-child) {
+            border-inline-end : $monthview-cell-border-width solid $monthview-border-color;
+        }
+    }
+
+    // The .b-cal-cell-header is flex : 0 0 auto
+    // The event container flexes to fill
+    .b-cal-event-bar-container {
+        flex : 1 1 100%;
+    }
+
+    &.b-responsive-small {
+        .b-cal-cell-header {
+            padding-block-start : 0.4em;
+
+            .b-day-name-date {
+                font-size : 1.5em;
+            }
+            .b-dayname-date {
+                flex-direction  : row;
+                justify-content : center;
+                > * {
+                   font-size: 1.5em;
+                }
+            }
+        }
+    }
+}

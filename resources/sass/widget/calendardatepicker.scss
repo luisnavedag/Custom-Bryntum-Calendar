@@ -1,0 +1,10 @@
+.b-calendardatepicker {
+    .b-show-events-dots {
+        .b-calendar-cell {
+            &.b-selected-date:not(.b-in-range) > .b-datepicker-cell-inner {
+                color            : inherit;
+                background-color : rgba($calendar-today-background-color, 0.2);
+            }
+        }
+    }
+}

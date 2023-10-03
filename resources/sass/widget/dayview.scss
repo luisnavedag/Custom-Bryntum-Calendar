@@ -1,0 +1,677 @@
+@import '../variables';
+
+.b-dayview {
+    --dayview-border-color             : #{$dayview-border-color};
+    --dayview-background-color         : #{$dayview-background-color};
+    --panel-background-color           : #{$dayview-background-color};
+    --dayview-half-hour-line-color     : #{$dayview-half-hour-line-color};
+    --dayview-outside-core-hours-color : #{$dayview-outside-core-hours-color};
+    --dayview-body-background-color    : #{$dayview-event-body-background-color};
+    --dayview-body-hover-mask-color    : rgba(100, 100, 100, 0.1);
+    --dayview-body-selected-mask-color : rgba(50, 50, 50, 0.1);
+
+    &.b-dayview-with-dayselector {
+        &.b-has-allday-events {
+            .b-calendarrow-body {
+                border-top-width : 0;
+            }
+        }
+        .b-dayview-content {
+            .b-calendarrow-header {
+                display : none;
+            }
+        }
+    }
+
+    .b-cal-event-desc {
+        line-height : 1.2;
+    }
+}
+
+// Nesting required to win over other bundle themes
+// https://github.com/bryntum/support/issues/2820
+.b-daycellcollecter .b-dayview-content {
+    display          : flex;
+    align-items      : stretch;
+    padding          : 0;
+    flex             : 1 1 0%;
+    overflow         : hidden;
+    background-color : $dayview-background-color;
+    color            : $dayview-foreground-color;
+    outline          : none;
+
+    .b-virtual-scrollers {
+        padding-inline-start : var(--time-axis-width);
+        background-color     : $dayview-background-color;
+
+        .b-virtual-scroller {
+            border-inline-start : $dayview-split-width solid $dayview-border-color;
+            flex                : 1 1 0%;
+
+            .b-scroller-stretcher {
+                position : relative;
+            }
+        }
+    }
+
+    .b-dayview-day-detail {
+        z-index            : 0;
+        display            : flex;
+        position           : relative;
+        padding-inline-end : var(--dayview-cell-gutter);
+
+        &.b-dayview-inset-before {
+            .b-dayview-inset::before {
+                content : " ";
+                left    : 0;
+
+                .b-rtl & {
+                    left  : unset;
+                    right : 0;
+                }
+            }
+
+            .b-dayview-event-container {
+                margin-inline-start : calc(var(--dayview-cell-inset-size));
+            }
+        }
+
+        &.b-dayview-inset-after {
+            .b-dayview-inset::after {
+                content : " ";
+                right   : 0;
+
+                .b-rtl & {
+                    left  : 0;
+                    right : unset;
+                }
+            }
+
+            .b-dayview-event-container {
+                margin-inline-end : calc(var(--dayview-cell-inset-size));
+            }
+        }
+    }
+
+    .b-dayview-inset {
+        position : absolute;
+        width    : calc(100% - var(--dayview-cell-gutter));
+        top      : 0;
+        bottom   : 0;
+
+        &::after,
+        &::before {
+            background-color : $dayview-inset-background-color;
+            position         : absolute;
+            width            : calc(var(--dayview-cell-inset-size));
+            top              : 0;
+            bottom           : 0;
+            z-index          : -1;
+        }
+    }
+
+    .b-dayview-event-container {
+        flex     : 1;
+        position : relative;
+    }
+
+    .b-dayview-inset-after {
+        width : calc(var(--dayview-cell-inset-after) * var(--dayview-cell-inset-after-enabled));
+    }
+
+    .b-cal-event-wrap {
+        &:is(.b-starts-above, .b-ends-below) {
+            &:before, &:after {
+                font-family         : $icon-font;
+                transform           : translate(-50%, -2px);
+                margin-inline-start : 50%;
+                position            : absolute;
+                font-size           : 80%;
+                opacity             : 0.7;
+                z-index             : 1;
+                pointer-events      : none;
+
+                .b-rtl & {
+                    transform : translate(50%, -2px);
+                }
+            }
+        }
+
+        // The two overflow indicators have to be :before and :after because
+        // an event can overflow a day column at both ends. Multi day events
+        // can be displayed wrapped through day columns using showAllDayHeader : false
+        &.b-starts-above {
+            &:before {
+                content : "\f106";
+                top     : 0;
+            }
+        }
+        &.b-ends-below {
+            &:after {
+                content : "\f107";
+                bottom  : 0;
+            }
+        }
+    }
+
+    // When an event renderer produces DomConfig children array, we lay
+    // the items out column wise, left aligned.
+    .b-cal-event-desc-complex {
+        display        : flex;
+        flex-direction : column;
+        flex           : 1;
+        align-items    : normal;
+    }
+}
+
+.b-dayview-allday-row {
+    display    : flex;
+    flex-flow  : row nowrap;
+    max-height : 50%;
+    box-shadow : 0px 4px 4px rgba($calendar-border-color, 0.5);
+}
+
+.b-dayview-day-detail .b-cal-event-wrap {
+    // A default min height in case event is below the view's fifteen pixel duration to ensure it's never invisible
+    min-height : var(--dayview-min-event-height);
+
+    // Dragging relies on being able to resize
+    &.b-cal-tentative-event {
+        min-height : 10px;
+    }
+}
+
+.b-dayview-allday-row-start {
+    display         : flex;
+    flex-flow       : column nowrap;
+    align-items     : center;
+    justify-content : flex-end;
+    flex            : 0 0 var(--time-axis-width);
+    min-width       : var(--time-axis-width);
+
+    // Not currently showing for cleaner look
+    .b-dayview-allday-text {
+        flex            : 1 1 auto;
+        display         : none;
+        flex-flow       : column nowrap;
+        justify-content : center;
+        font-size       : .7em;
+        color           : $dayview-time-axis-color;
+    }
+
+    .b-expand-allday-button {
+        display : none;
+
+        :before {
+            // line-height:1 in icon rendering breaks vertical centering
+            line-height : inherit;
+        }
+    }
+
+    &.b-has-cell-overflow:not(.b-dayview-allday-autoheight) {
+        padding : .5em 0;
+        cursor  : pointer;
+
+        .b-expand-allday-button {
+            transition       : transform 0.3s;
+            display          : flex;
+            height           : 1.5em;
+            width            : 1.5em;
+            justify-content  : center;
+            align-items      : center;
+            border-radius    : 50%;
+            cursor           : inherit;
+
+            // Override user agent button styling
+            border           : 0 none;
+            background-color : transparent;
+            color            : $dayview-time-axis-color;
+
+            &:focus {
+                outline          : none;
+                background-color : #e8e8e8;
+            }
+        }
+
+        &.b-expanded {
+            .b-expand-allday-button {
+                transform : rotate(-180deg);
+            }
+        }
+    }
+}
+
+.b-dayview-schedule-container {
+    border-inline-start : $dayview-split-width solid $dayview-border-color;
+    flex                : 1 0 0%;
+    contain             : style layout;
+}
+
+.b-dayview-day-content {
+    // Default value if we are not zoomed in
+    --tick-height : var(--half-hour-height);
+
+    display     : flex;
+    flex-flow   : row nowrap;
+    flex        : 1 1 0;
+    border-top  : 1px solid $dayview-border-color;
+    align-items : flex-start;
+    outline     : none;
+    position    : relative;
+
+    // For some reason, on Chrome, when the all day row is auto heighted to subpixel hights, the
+    // all day row occludes the top pixel of the day view. The next element in the DOM
+    // - the day view's content element - actually begins beneath the all day row's element.
+    // This rule makes it stand above it to show its top border.
+    z-index     : 1;
+}
+
+.b-dayview-day-container {
+    flex                : 1 0 0%;
+    border-inline-start : $dayview-split-width solid $dayview-border-color;
+    display             : flex;
+    flex-flow           : row nowrap;
+    align-items         : stretch;
+    min-height          : 100%;
+    overscroll-behavior : contain auto;
+    contain             : layout style;
+
+    background-image    : linear-gradient(to bottom,
+        transparent,
+        transparent calc(var(--hour-height) - 1px),
+        var(--dayview-border-color) 1px),
+
+        repeating-linear-gradient(to bottom,
+        transparent,
+        transparent calc(var(--tick-height)),
+        var(--dayview-half-hour-line-color) calc(var(--tick-height)),
+        transparent calc(var(--tick-height) + 1px));
+
+    background-size       : 100% var(--hour-height);
+    background-position-y : var(--day-start-offset);
+    clip-path             : polygon(0px 0px, 100% 0px, 100% calc(var(--day-length) * var(--hour-height)), 0px calc(var(--day-length) * var(--hour-height)));
+
+    // The background-size is defined as `100% {hourHeight}` in DayView#refreshDayBackground
+    // so it only has to repeat in the Y axis.
+    background-repeat: repeat-y;
+
+    .b-overflow {
+        opacity : 0;
+    }
+
+    .b-cal-event-body {
+        transition : background-color 0.1s;
+    }
+
+    .b-cal-event-wrap.b-starts-above {
+        // .b-cal-event-desc,
+        .b-event-header {
+            visibility: hidden;
+        }
+    }
+
+    .b-current-time-indicator {
+        position       : absolute;
+        pointer-events : none;
+        border-top     : 2px solid $dayview-time-indicator-color;
+        margin-top     : -2px;
+        width          : 100%;
+        z-index        : 3;
+
+        &:before {
+            content             : "";
+            height              : 10px;
+            width               : 10px;
+            border-radius       : 50%;
+            position            : absolute;
+            background-color    : $dayview-time-indicator-color;
+            margin-top          : -6px;
+            margin-inline-start : -5px;
+        }
+    }
+
+    .b-calendar-cell {
+        // Must exactly match flex of CalendarRow's .b-calendar-cell
+        flex     : 1 1 100%;
+
+        height    : var(--day-height);
+        min-width : var(--min-day-width);
+        position  : relative;
+        overflow  : visible;
+
+        // No right border on last cell. Widget has a border.
+        // last-of-type means the current time indicator, an <span> doesn't affect the rule.
+        &:not(:last-of-type) {
+            border-inline-end : 1px solid $dayview-border-color;
+        }
+
+        .b-cal-tentative-event,
+        .b-cal-event-wrap {
+            position   : absolute;
+            z-index    : 2;
+
+            // Defaults to starting at the left.
+            // overlapping handling may add inline left.
+            left       : 0;
+
+            .b-rtl & {
+                left  : auto;
+                right : 0;
+            }
+
+            // Defaults to 100% of day width.
+            // overlapping handling may add inline width.
+            width      : 100%;
+
+            // right style is manipulated in RTL mode
+            transition : left 0.1s, right 0.1s, width 0.1s, opacity 0.1s;
+
+            // Show the event full size if it's the subject of the EventTooltip
+            // or if it's being edited.
+            &.b-editing {
+                // Take over from layout
+                left    : 0 !important;
+                width   : calc(100% + var(--dayview-cell-gutter)) !important;
+                z-index : 3;
+                opacity : 1;
+
+                .b-rtl & {
+                    left  : auto !important;
+                    right : 0 !important;
+                }
+            }
+
+            // Lift events in a cluster above each other with a subtle, semi-opaque drop shadow
+            &.b-cal-in-cluster {
+                box-shadow : #aaaaaa40 -2px 1px 3px, #aaaaaa40 0 -1px 3px;
+            }
+
+            .b-event-action-buttons {
+                position          : absolute;
+                inset-inline-end  : 0.25em;
+                inset-block-start : 0.25em;
+                .b-tool {
+                    font-size : 125%;
+                }
+            }
+
+            // Short events squeeze the time and desc into one row
+            &.b-short-event {
+                .b-event-header {
+                    margin : 0;
+                }
+                .b-cal-event-body {
+                    padding-block : 0;
+
+                    // Per Mats 28/10/2020
+                    // Flip order of time and description in compact rendition
+                    flex-flow       : row-reverse nowrap;
+                    justify-content : flex-end;
+                    align-items     : center;
+                    gap             : 0.2em;
+
+                    .b-cal-event-desc {
+                        font-size   : 0.7em;
+                        white-space : nowrap;
+                        flex        : 0 1 auto;
+                    }
+                }
+                // Per Mats 28/10/2020
+                // Make alphabetic parts of time (am/pm) lowercase in compact rendition
+                .b-event-time {
+                    text-transform : lowercase;
+                }
+                .b-cal-event-footer, .b-cal-event-resource-avatars {
+                    display : none;
+                }
+
+                // When there's less space, shrink the buttons
+                .b-event-action-buttons {
+                    inset-block-start : calc(50% - 0.5em);
+                    .b-tool {
+                        font-size : 65%;
+                        height    : 1.4em;
+                        width     : 3.8em;
+                    }
+                }
+            }
+        }
+
+        .b-cal-tentative-event {
+            // Must be greater than the .b-active z-index rule in eventrendering.scss which is 10
+            z-index : 20;
+        }
+
+        .b-cal-event {
+            align-items      : stretch;
+            background-color : var(--cal-event-color);
+            color            : $dayview-event-color;
+            border-radius    : $dayview-event-border-radius;
+
+            // This is needed to work round an apparent Chrome bug where the
+            // .b-cal-event-wrap appears to be *above* the event in the stacking order
+            // causing Siesta to be unable to click it.
+            position         : relative;
+
+            // Avatars lay out in a grid in DayView event blocks.
+            .b-cal-event-resource-avatars {
+                display               : grid;
+                column-gap            : 0;
+                grid-template-columns : repeat(auto-fill, minmax(1.4em, 1fr));
+                padding-inline-end    : 0.6em;
+                padding-block-end     : $cal-event-bar-gap;
+
+                .b-resource-avatar {
+                    width      : 2em;
+                    height     : 2em;
+                    transition : transform .2s;
+
+                    &:hover {
+                        transform : scale(2);
+                        z-index   : 1;
+                    }
+                }
+            }
+        }
+
+        .b-cal-event-body {
+            padding          : $dayview-event-body-padding;
+            flex             : 1 1 0%;
+            margin           : $dayview-event-body-margin;
+            background-color : var(--dayview-body-background-color);
+            white-space      : normal;
+            display          : flex;
+            flex-direction   : column;
+
+            // Flip horizontally for RTL
+            .b-rtl & {
+                margin : mirrorSides($dayview-event-body-margin);
+            }
+        }
+
+        &.b-nonworking-day {
+            background-color : $dayview-nonworking-day-background-color;
+        }
+
+        &.b-today {
+            background-color : $dayview-today-background-color;
+        }
+    }
+
+    .b-event-header {
+        display       : flex;
+        align-items   : center;
+        white-space   : nowrap;
+        gap           : $cal-event-bar-gap;
+
+        .b-event-time {
+            flex      : 1;
+            font-size : .7em;
+        }
+    }
+
+    .b-cal-event-wrap:hover .b-cal-event-body {
+        background-color : $dayview-event-hover-body-background-color;
+    }
+
+    .b-cal-event-wrap.b-selected:not(.b-dragging-item):hover,
+    .b-cal-event-wrap.b-selected:not(.b-dragging-item),
+    .b-cal-event-wrap.b-cal-tentative-event {
+        .b-cal-event-body {
+            background-color : $dayview-event-selected-body-background-color;
+        }
+    }
+
+    .b-cal-event-wrap.b-custom-body-color {
+        // Darken bodyColor a little on hover
+        &:hover .b-cal-event-body {
+            background : linear-gradient(var(--dayview-body-hover-mask-color), var(--dayview-body-hover-mask-color)) var(--dayview-body-background-color);
+        }
+
+        // Darken bodyColor a little more on select or for the tentative (dragged) event
+        &.b-selected:not(.b-dragging-item):hover,
+        &.b-selected:not(.b-dragging-item),
+        &.b-cal-tentative-event {
+            .b-cal-event-body {
+                background : linear-gradient(var(--dayview-body-selected-mask-color), var(--dayview-body-selected-mask-color)) var(--dayview-body-background-color);
+            }
+        }
+    }
+}
+
+// Transitions blocked in certain scenarios, such as full refresh
+.b-dayview.b-no-transitions {
+    .b-cal-event-wrap {
+        transition : none !important;
+    }
+}
+
+.b-timeaxis-container {
+    display               : flex;
+    flex-flow             : column nowrap;
+    overflow              : hidden;
+    background-position-x : 100%;
+
+    .b-rtl & {
+        background-position-x : 0%;
+    }
+
+    background-repeat     : repeat-y;
+    flex                  : 0 0 var(--time-axis-width);
+    min-width             : var(--time-axis-width);
+    height                : var(--day-height);
+    background-image      : linear-gradient(to bottom,
+        transparent calc(var(--hour-height) - 1px),
+        var(--dayview-border-color) 1px),
+
+        repeating-linear-gradient(to bottom,
+        transparent,
+        transparent calc(var(--tick-height)),
+        var(--dayview-half-hour-line-color) calc(var(--tick-height)),
+        transparent calc(var(--tick-height) + 1px));
+    background-size       : 0.5em var(--hour-height);
+    background-position-y : var(--day-start-offset);
+    position              : relative;
+
+    // Element to carry the core hours background
+    .b-dayview-timeaxis-background {
+        pointer-events: none;
+        position      : absolute;
+        top           : 0;
+        right         : 0;
+        bottom        : 0;
+        left          : 0;
+    }
+}
+
+.b-dayview-timeaxis-tick {
+    opacity         : 0;
+    transition      : opacity 0.4s;
+    max-height      : calc(var(--leaf-tick-height) + 1px);
+    flex            : 1 0 0%;
+    display         : flex;
+    flex-direction  : column;
+    justify-content : flex-end;
+    position        : relative;
+    top             : 1ex;
+
+    // When we flip to fitHours, no transition should be seen
+    .b-fit-hours & {
+        transition : none;
+    }
+}
+
+// This tick values are always visible and overlay the hour line
+.b-dayview-hour-tick {
+    color      : $dayview-time-axis-hour-color;
+    opacity    : 1;
+}
+
+.b-dayview-timeaxis-time {
+    display            : flex;
+    flex-flow          : column nowrap;
+    flex               : 0 0 var(--hour-height);
+    align-items        : flex-end;
+    font-size          : .7em;
+    color              : $dayview-time-axis-color;
+    white-space        : nowrap;
+    position           : relative;
+    padding-inline-end : 1em;
+
+    // Don't waste cycles calculating mousemove/over/out events for all these.
+    pointer-events     : none;
+
+    // Ending hour tick hidden because it's clipped out of view
+    &:last-child {
+        .b-dayview-hour-tick {
+            display : none;
+        }
+    }
+}
+
+// When hour grows beyond a certain height, we show first level of subticks
+.b-dayview-hourheight-level-1 {
+    .b-dayview-tick-level-1 {
+        opacity : 1;
+    }
+}
+
+// When hour grows a little more, we show level 2 subticks
+.b-dayview-hourheight-level-2 {
+    .b-dayview-tick-level-2 {
+        opacity : 1;
+    }
+    // Fifteen minute ticks
+    --tick-height : var(--fifteen-minute-height);
+}
+
+// When hour grows a little more, we show level 3 subticks
+.b-dayview-hourheight-level-3 {
+    .b-dayview-tick-level-3 {
+        opacity : 1;
+    }
+    // Ten minute ticks
+    --tick-height : var(--ten-minute-height);
+}
+
+// When hour is enormous, we show level 4 subticks
+.b-dayview-hourheight-level-4 {
+    .b-dayview-tick-level-4 {
+        opacity : 1;
+    }
+    // Five minute ticks
+    --tick-height : var(--five-minute-height);
+}
+
+// Time subdivision line background for six minute intervals
+.b-six-minute-ticks {
+    .b-dayview-hourheight-level-2 {
+        // Twelve minute ticks
+        --tick-height : var(--twelve-minute-height);
+    }
+
+    .b-dayview-hourheight-level-3 {
+        // Six minute ticks
+        --tick-height : var(--six-minute-height);
+    }
+}

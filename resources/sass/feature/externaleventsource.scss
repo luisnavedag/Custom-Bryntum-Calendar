@@ -1,0 +1,46 @@
+.b-grid-to-cal-drag-proxy {
+    position             : absolute;
+    z-index              : 10;
+    pointer-events       : none;
+    opacity              : 0.9;
+    width                : 15em;
+    height               : 25px;
+    align-items          : center;
+    display              : flex;
+    overflow             : hidden;
+    text-overflow        : ellipsis;
+    background-color     : $calendar-event-bar-color;
+    border-radius        : $cal-event-border-radius;
+    color                : $cal-allday-event-color;
+    padding-inline-start : $calendar-event-bar-padding-start;
+    font-size            : $monthview-event-bar-font-size;
+
+    // If there's an icon, space it from any text
+    .b-fa {
+        font-size : $cal-event-icon-font-size;
+        &:first-child {
+            margin-inline-end : $cal-event-bar-gap;
+        }
+
+        &:not(:first-child) {
+            margin-inline-start : $cal-event-bar-gap;
+        }
+    }
+}
+
+.b-grid-row.b-drop-above:before {
+    content          : "";
+    position         : absolute;
+    height           : 1px;
+    width            : 100%;
+    background-color : red;
+}
+
+.b-grid-row.b-drop-below:before {
+    content          : "";
+    position         : absolute;
+    top              : calc(100% - 1px);
+    height           : 1px;
+    width            : 100%;
+    background-color : red;
+}

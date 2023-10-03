@@ -1,0 +1,297 @@
+@import '../variables';
+
+.b-monthview {
+    // No borders are shown. All we need is the width, so hide display.
+    .b-visible-scrollbar & {
+        .b-show-yscroll-padding > .b-yscroll-pad {
+            visibility : hidden;
+        }
+    }
+
+    // Implement hideOtherMonthCells
+    &.b-hide-othermonth-cells {
+        .b-calendar-row[data-row-index="0"] {
+            // First-of-month cells which are not at column 0 must have a left border
+            // because month cells have only right borders by default.
+            .b-calendar-cell[data-date$="-01"]:not([data-column-index="0"]) {
+                border-inline-start: $monthview-cell-border-width solid $monthview-border-color;
+                margin-inline-start: -$monthview-cell-border-width;
+            }
+        }
+    }
+
+    &.b-disable-othermonth-cells {
+        .b-calendar-cell.b-other-month {
+            // Event root element in the other month must not be opacity 0.8*0.7
+            .b-cal-event-wrap:not(.b-overflow) {
+                opacity        : 1;
+                pointer-events : all;
+            }
+        }
+    }
+
+    .b-calendar-row.b-calendar-weekdays {
+        flex : 0 0 auto;
+
+        .b-week-number-cell {
+            flex : 0 0 $monthview-week-column-width;
+        }
+
+        .b-calendar-day-header {
+            flex               : 1;
+            display            : flex;
+            justify-content    : flex-end;
+            color              : $monthview-header-cell-color;
+            padding-inline-end : .5em;
+            padding-bottom     : .25em;
+
+            &.b-weekend {
+                color : $monthview-header-cell-weekend-color;
+            }
+        }
+    }
+
+    .b-week-number-cell, .b-calendar-cell {
+        flex-direction : column;
+
+        // Optimize DOM style computation and layout
+        contain        : size style;
+
+        &.b-other-month {
+            .b-day-num {
+                color : $monthview-cell-other-month-color;
+            }
+        }
+    }
+
+    .b-week-num, .b-day-num {
+        font-size       : $monthview-cell-header-daynum-font-size;
+        height          : $monthview-cell-header-content-height;
+        width           : $monthview-cell-header-content-height;
+        align-self      : flex-end;
+        display         : flex;
+        align-items     : center;
+        justify-content : center;
+    }
+
+    .b-calendar-cell {
+        .b-week-num {
+            color             : $monthview-cell-header-week-color;
+
+            // Pushes the .b-day-num el all the way across.
+            margin-inline-end : auto;
+        }
+    }
+
+    .b-weeks-container {
+        flex   : 1 0 0%;
+        border : $monthview-cell-border-width solid $monthview-border-color;
+
+        .b-calendar-row {
+            flex       : 1 0 0px;
+
+            border-bottom : $monthview-cell-border-width solid $monthview-border-color;
+
+            &:last-child {
+                border-bottom : 0 none;
+            }
+
+            // In a shrinkwrapped week row, no overflow indicator is visible
+            &.b-shrinkwrapped {
+                // It animates to its full height.
+                // Note that Safari appears not to be able to animate flex-basis.
+                transition : flex-basis 0.5s;
+
+                // It's shrinkwrapping content, so must never overflow
+                overflow : hidden;
+
+                .b-cal-cell-overflow {
+                    display : none;
+                }
+
+                // Show it again when it's moving back to being in flexed mode
+                &.b-flexing {
+                    .b-cal-cell-overflow {
+                        display : initial;
+                    }
+                }
+            }
+
+            .b-week-number-cell, .b-calendar-cell {
+                flex  : 1;
+                color : $monthview-cell-color;
+
+                border-inline-end : $monthview-cell-border-width solid $monthview-border-color;
+
+                &:last-child {
+                    border-inline-end: 0 none;
+                }
+
+                &.b-weekend {
+                    color : $monthview-cell-weekend-color;
+                }
+
+                // We use a "+ 2 more" clickable indicator
+                overflow     : hidden;
+
+                &.b-today {
+                    .b-day-num {
+                        border-radius    : 50%;
+                        background-color : $monthview-today-daynum-background-color;
+                        color            : $monthview-today-daynum-color;
+                        font-weight      : $monthview-today-daynum-font-weight;
+
+                        // When a solid background colour, it can overflow the day header bar.
+                        // Make the "today" circle a little smaller.
+                        font-size        : 85%;
+                    }
+                }
+
+                &.b-nonworking-day {
+                    background-color : $monthview-nonworking-day-background-color;
+
+                    // If the hidden state was set dynamically, and not from the
+                    // configured state, then the cell must remain visible to keep
+                    // column arrangement correct.
+                    &.b-dynamic-nonworking-day {
+                        display : flex !important;
+                    }
+                }
+            }
+
+            .b-week-number-cell {
+                padding-top      : 5px;
+                text-align       : center;
+                cursor           : pointer;
+                flex             : 0 0 $monthview-week-column-width;
+                background-color : $monthview-week-cell-background-color;
+                color            : $monthview-week-cell-color;
+
+                // Clickable appearance.
+                &:hover {
+                    background-color : $monthview-week-cell-hover-background-color;
+                    color            : $monthview-week-cell-hover-color;
+                    border-radius    : $monthview-week-cell-hover-border-radius;
+                }
+            }
+        }
+
+        .b-calendar-days {
+            // So that this acts as the offsetParent for the position:absolute
+            // events, and %age widths are relative to the week width.
+            position : relative;
+        }
+    }
+
+    // When we're hiding non working days, the last working day is the last visible
+    // cell. That must not border-collide with the .b-weeks-container's border
+    .b-hide-nonworking-days {
+        .b-weeks-container {
+            .b-last-working-day {
+                border-inline-end : 0 none;
+            }
+        }
+    }
+
+    .b-cal-cell-header {
+        display          : flex;
+        background-color : $monthview-cell-header-background-color;
+        color            : $monthview-cell-header-color;
+        padding          : $monthview-cell-header-padding;
+        max-height       : $monthview-cell-header-dayname-height;
+        align-items      : center;
+
+        // Week number, when present has margin-inline-end:auto which pushes the .b-day-num to the end.
+        // Day number, when present, has margin-inline-start:auto.
+        justify-content  : center;
+
+        .b-day-name {
+            height        : $monthview-cell-header-dayname-height;
+            display       : flex;
+            align-items   : center;
+            white-space   : nowrap;
+            text-overflow : ellipsis;
+            overflow      : hidden;
+        }
+
+        // This class means it's the day number.
+        // It must be circular.
+        // And when a filled circle, it must be above content.
+        .b-day-num {
+            height              : $monthview-cell-header-content-height;
+            z-index             : 10;
+            margin-inline-start : auto;
+        }
+    }
+
+    // By default, number is end justified using justify-content : flex-end.
+    // If centered, the week number column should be used, otherwise the week number's
+    // margin-inline-end will always end-justify the .b-day-num.
+    &.day-number-center {
+        .b-cal-cell-header {
+            justify-content : center;
+        }
+    }
+
+    // When we're showing the week number column, hide the week number in column zero
+    &.b-show-week-column {
+        .b-week-num {
+            display : none;
+        }
+
+        // Whole cell header has a clickable appearance if showing week number column
+        // as a clickable week selector
+        .b-cal-cell-header {
+            cursor : pointer;
+
+            &:hover {
+                background-color : $monthview-cell-header-hover-background-color;
+                color            : $monthview-cell-header-hover-color;
+                border-radius    : $monthview-cell-header-hover-border-radius;
+            }
+        }
+    }
+
+    // If not showing the week number column, week number and date are clickable
+    &:not(.b-show-week-column) {
+        // Always gets a pointer cursor
+        .b-day-name {
+            cursor : pointer;
+        }
+
+        // Only gets a border radius if its an actual number
+        .b-week-num, .b-day-num {
+            &:hover {
+                cursor           : pointer;
+                background-color : $monthview-cell-header-hover-background-color;
+                color            : $monthview-cell-header-hover-color;
+                border-radius    : 50%;
+            }
+        }
+    }
+
+    .b-monthview-content {
+        contain          : strict;
+        background-color : $monthview-background-color;
+
+        // Overrides from Panel, otherwise week rows grow with content and uses space-between
+        flex-basis      : 0%;
+        justify-content : flex-start;
+        padding         : $monthview-padding;
+    }
+
+    .b-cal-event-bar-container,
+    .b-cal-cell-overflow {
+        font-size : $monthview-event-bar-font-size;
+    }
+}
+
+// Events may be rendered in different contexts, so use the mixin
+@include calendar-event();
+
+.b-cal-event-list {
+    .b-panel-header .b-header-title {
+        font-size : 1em;
+        cursor    : pointer;
+    }
+}

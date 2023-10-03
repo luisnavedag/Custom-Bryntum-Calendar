@@ -1,0 +1,475 @@
+@import 'variables';
+
+.cal-view-readonly {
+    filter     : grayscale(75%);
+    transition : filter 0.5s;
+}
+
+.b-show-events-dots {
+    --event-count-dot-size : 4px;
+}
+
+@mixin calendar-event() {
+    // Base rendition of Calendar events whether they are in a cell, or in an overflow Popup
+    .b-cal-event-wrap {
+        // The :before, .event and :after are layed out as a flexbox row
+        display  : flex;
+
+        overflow : hidden;
+
+        //&.b-past-event {
+        // Do we want them displayed differently?
+        //}
+
+        // Make read-only events a bit paler using opacity
+        &.b-readonly {
+            opacity : 0.8;
+
+            // With even paler contents
+            .b-event-header,
+            .b-cal-event-desc {
+                opacity : 0.5;
+            }
+        }
+
+        .b-grid-row & {
+            transition : opacity 0.1s;
+        }
+
+        .b-draggable-started & {
+            &:not(.b-dragging-item) {
+                pointer-events : none;
+            }
+
+            &.b-dragging-item {
+                opacity        : 0.5;
+                outline        : none;
+                // So that mousemove target returns the underlying cell
+                pointer-events : none;
+            }
+        }
+
+        // Mouse shows invitation on hover
+        &:hover {
+            cursor : pointer;
+        }
+
+        // Non all day events *which have no bar* get a bar on hover
+        &.b-intraday:not(.b-solid-bar) .b-cal-event {
+            .b-cal-event-body {
+                --cal-event-color : $cal-intraday-event-color;
+            }
+
+            &:hover {
+                background : $cal-intraday-event-hover-background;
+            }
+        }
+
+        // Navigation active rendition
+        .b-using-keyboard &.b-active {
+            outline        : $grid-cell-focused-outline-width $grid-cell-focused-outline-color $grid-cell-focused-outline-style;
+            outline-offset : 1px;
+        }
+
+        &.b-active:not(.b-dragging-item) {
+            outline : none;
+
+            // Need to override the b-overflow rule for opacity : 0
+            opacity : 1 !important;
+
+            // Need to jump above other events in DayView clusters.
+            z-index : 10 !important;
+        }
+
+        &.b-continues-past {
+            // If configured to do so, budged continued from the past events
+            // so that the arrow is left of normal rectangular bar start point.
+            // This makes icons line up
+            .b-offset-continues-past & {
+                margin-inline-start : var(--arrow-margin);
+            }
+
+            &:not(.b-rtl) {
+                .b-cal-event {
+                    padding-left : calc(var(--arrow-width) + $calendar-event-bar-padding-start);
+                    clip-path    : polygon(0 50%, var(--arrow-width) 0, 100% 0, 100% 100%, var(--arrow-width) 100%);
+                }
+            }
+
+            &.b-rtl {
+                .b-cal-event {
+                    padding-right : calc(var(--arrow-width) + $calendar-event-bar-padding-start);
+                    clip-path     : polygon(0 0, calc(100% - var(--arrow-width)) 0, 100% 50%, calc(100% - var(--arrow-width)) 100%, 0 100%);
+                }
+            }
+        }
+
+        &.b-continues-future:not(.b-rtl) {
+            .b-cal-event {
+                padding-right : calc(var(--arrow-width) + $calendar-event-bar-padding-start);
+                clip-path     : polygon(0 0, calc(100% - var(--arrow-width)) 0, 100% 50%, calc(100% - var(--arrow-width)) 100%, 0 100%);
+            }
+        }
+
+        &.b-continues-future.b-rtl {
+            .b-cal-event {
+                padding-left : calc(var(--arrow-width) + $calendar-event-bar-padding-start);
+                clip-path    : polygon(0 50%, var(--arrow-width) 0, 100% 0, 100% 100%, var(--arrow-width) 100%);
+            }
+        }
+
+        &.b-continues-past.b-continues-future {
+            .b-cal-event {
+                clip-path : polygon(0 50%, var(--arrow-width) 0, calc(100% - var(--arrow-width)) 0, 100% 50%, calc(100% - var(--arrow-width)) 100%, var(--arrow-width) 100%);
+            }
+        }
+
+        // Transient states last because they must override
+        &.b-focused {
+            .b-cal-event {
+                background-color : $cal-focused-event-background-color !important;
+                color            : $cal-focused-event-color !important;
+            }
+        }
+    }
+
+    // The coloured bar representing the span of the event
+    .b-cal-event {
+        display       : flex;
+        border-radius : $cal-event-border-radius;
+        align-items   : center;
+        flex          : 1 1 auto;
+        overflow      : hidden;
+        color         : $cal-intraday-event-color;
+        line-height   : 1;
+
+        .b-icon {
+            flex-shrink : 0;
+            display     : flex;
+
+            &:before {
+                font-size : calc(var(--event-height) - 12px);
+            }
+        }
+    }
+
+    .b-cal-minimal-event-container {
+        pointer-events  : none;
+        position        : absolute;
+        top             : 1.5em;
+        width           : calc((var(--event-count-dot-size) + 2px) * 4);
+        display         : flex;
+        flex-wrap       : wrap;
+        justify-content : center;
+        column-gap      : 2px;
+        row-gap         : 1px;
+        opacity         : 0.6;
+
+        .b-cal-event-wrap {
+            position      : static !important;
+            height        : var(--event-count-dot-size);
+            width         : var(--event-count-dot-size);
+            border-radius : 50%;
+            padding       : 0 !important;
+        }
+
+        .b-cal-event {
+            padding          : 0;
+            background-color : var(--cal-event-color);
+        }
+    }
+
+    .b-resource-avatar {
+        border : $resource-avatar-border-width solid var(--cal-event-color);
+    }
+
+    // The solidBar render property is set by default for allDay and inter day events
+    // but an eventRenderer may set it
+    .b-solid-bar {
+        .b-cal-event {
+            background-color : var(--cal-event-color);
+        }
+        .b-resource-avatar {
+            border : $resource-avatar-border-width solid $resource-avatar-border-color;
+        }
+    }
+
+    // If an eventRenderer returns children, we set the b-cal-event-desc to flexbox so they can lay out
+    .b-cal-event-desc-complex {
+        display     : flex;
+        align-items : center;
+        gap         : $cal-event-bar-gap;
+    }
+
+    .b-cal-event-name {
+        margin-inline-start : $cal-event-bar-gap;
+        flex                : 1;
+        overflow            : hidden;
+        text-overflow       : ellipsis;
+        line-height         : $dayview-event-name-line-height;
+        min-height          : 1lh;
+    }
+
+    .b-cal-event-resource-avatars {
+        gap            : inherit;
+        display        : flex;
+        flex-direction : row;
+        flex-shrink    : 0;
+    }
+
+    // Invitation to click. resource{eventName} events are fired.
+    :not(.b-calendar-cell)[data-resource-id] {
+        cursor : pointer;
+    }
+
+    .b-cal-event-body {
+        white-space : nowrap;
+        overflow    : hidden;
+        line-height : $dayview-event-name-line-height;
+
+        .b-cal-event-desc {
+            overflow          : hidden;
+            text-overflow     : ellipsis;
+            line-height       : 1.2;
+            // Without this, at line-height:1, the browser miscalculates the shrinkwrap height
+            // of the text and crops the last pixel.
+            padding-block-end : 1px;
+        }
+    }
+
+    .b-draggable-active .b-calendar-cell {
+        @include user-select-none();
+    }
+}
+
+
+// General purpose container container of horizontal event *bars* with fixed height (month view + calendar row in week view,
+// agenda view cell)
+// Default align-items is stretch. OverflowPopup relies on this.
+// All other widgets explicitly width their event bars.
+.b-cal-event-bar-container {
+    flex      : 1;
+    flex-flow : column;
+
+    // "Selected" rendition.
+    // Only applies to non allDay events.
+    // AllDay already have a background
+    .b-cal-event-wrap {
+        &:not(.b-solid-bar) {
+            &.b-cal-event-reveal,
+            &.b-editing,
+            &.b-selected,
+            &.b-active {
+                .b-cal-event {
+                    background : var(--cal-event-color);
+
+                    &:hover {
+                        background : var(--cal-event-color);
+                    }
+
+                    .b-cal-event-icon,
+                    .b-cal-recurrence-icon,
+                    .b-cal-event-body {
+                        color : #fff;
+                    }
+                }
+            }
+        }
+        &.b-solid-bar {
+            opacity      : .8;
+
+            &.b-cal-event-reveal
+            &.b-editing,
+            &:hover {
+                opacity : 1;
+            }
+        }
+    }
+
+    // Non solid bar events in DayCellRenderer + overflow uses color to pick out the icon
+    .b-cal-event-wrap:not(.b-solid-bar) .b-cal-event .b-icon {
+        color : var(--cal-event-color);
+    }
+
+    .b-cal-event {
+        // Equal padding both ends so that text or trailing icons don't run right into the end
+        padding : 0 $calendar-event-bar-padding-start;
+        gap     : $cal-event-bar-gap;
+    }
+
+    .b-solid-bar {
+        .b-event-time, .b-cal-event-desc, .b-icon {
+            color : $cal-allday-event-color;
+        }
+    }
+}
+
+// Day cell rendering specifics for horizontal event *bars*
+.b-daycellrenderer {
+    .b-cal-event-bar-container {
+        display   : flex;
+
+        // It consumes the available cell height below the date/week number header
+        flex-grow : 1;
+
+        // Optimize DOM style computation.
+        // Cannot contain layout or size because OverflowPopups must shrinkwrap the event bars.
+        contain   : style;
+
+        // The outer, positioning element
+        .b-cal-event-wrap {
+            position      : absolute;
+
+            // Width of 14.2857% (1/7th) of the .b-calendar row consumes the cell border.
+            // Pad the wrap so that the bar sits within the border.
+            padding-right : $monthview-cell-border-width + $monthview-event-padding;
+            padding-left  : $monthview-event-padding;
+
+            // long running events must sit atop following cells in the stacking order
+            z-index       : 1;
+
+            // If it is overflow from the previous cell, it must be invisible.
+            // They exist purely for accessibility. There must be accessible
+            // elements representing the data within the cells.
+            &.b-overflow {
+                opacity        : 0;
+                pointer-events : none;
+                max-width      : 14%;
+            }
+        }
+    }
+
+    // The +1 more button when it's not itself a day cell (YearView)
+    // or the "No events" button.
+    .b-cal-cell-overflow:not(.b-calendar-cell), .b-cal-cell-no-content {
+        flex             : 0 0 auto;
+        align-self       : stretch;
+        text-align       : center;
+        white-space      : nowrap;
+        cursor           : pointer;
+        color            : $calendar-cell-overflow-color;
+        margin           : 0 $monthview-event-padding;
+        font-family      : inherit;
+
+        // Same padding as event bars which it must match
+        padding          : 0 $calendar-event-bar-padding-start;
+
+        display          : flex;
+        align-items      : center;
+        justify-content  : center;
+        gap              : $cal-event-bar-gap;
+        border           : 0 none;
+        background-color : transparent;
+        text-overflow    : ellipsis;
+        overflow         : hidden;
+        border-radius    : $calendar-cell-overflow-hover-border-radius;
+
+        &:hover, &:focus-within {
+            background-color : $calendar-cell-overflow-hover-background-color;
+            color            : $calendar-cell-overflow-hover-color;
+        }
+
+        &.b-active {
+            outline     : 0 none;
+            font-weight : bold;
+            color       : darken($calendar-cell-overflow-color, 35);
+        }
+    }
+
+    .b-cal-cell-no-content {
+        padding     : 0.2em 0;
+        white-space : normal;
+        display     : inline-block;
+    }
+
+    // Last overflow item must not cause overflow
+    .b-calendar-cell:last-child {
+        .b-cal-event-bar-container {
+            .b-cal-event-wrap.b-overflow {
+                right : 0;
+            }
+        }
+    }
+}
+
+//region Colors
+
+.b-cal-color-red {
+    --cal-event-color : var(--cal-color-red);
+}
+
+.b-cal-color-pink {
+    --cal-event-color : var(--cal-color-pink);
+}
+
+.b-cal-color-purple {
+    --cal-event-color : var(--cal-color-purple);
+}
+
+.b-cal-color-violet {
+    --cal-event-color : var(--cal-color-violet);
+}
+
+.b-cal-color-blue {
+    --cal-event-color : var(--cal-color-blue);
+}
+
+.b-cal-color-cyan {
+    --cal-event-color : var(--cal-color-cyan);
+}
+
+.b-cal-color-teal {
+    --cal-event-color : var(--cal-color-teal);
+}
+
+.b-cal-color-green {
+    --cal-event-color : var(--cal-color-green);
+}
+
+.b-cal-color-lime {
+    --cal-event-color : var(--cal-color-lime);
+}
+
+.b-cal-color-yellow {
+    --cal-event-color : var(--cal-color-yellow);
+}
+
+.b-cal-color-orange {
+    --cal-event-color : var(--cal-color-orange);
+}
+
+.b-cal-color-deep-orange {
+    --cal-event-color : var(--cal-color-deep-orange);
+}
+
+.b-cal-color-gray {
+    --cal-event-color : var(--cal-color-gray);
+}
+
+.b-cal-color-gantt-green {
+    --cal-event-color : var(--cal-color-gantt-green);
+}
+
+.b-calendar,
+:not(.b-calendar-viewcontainer) > .b-calendarmixin {
+    --cal-color-red         : #{$event-color-red};
+    --cal-color-pink        : #{$event-color-pink};
+    --cal-color-purple      : #{$event-color-purple};
+    --cal-color-violet      : #{$event-color-violet};
+    --cal-color-indigo      : #{$event-color-indigo};
+    --cal-color-blue        : #{$event-color-blue};
+    --cal-color-cyan        : #{$event-color-cyan};
+    --cal-color-magenta     : #{$event-color-magenta};
+    --cal-color-teal        : #{$event-color-teal};
+    --cal-color-green       : #{$event-color-green};
+    --cal-color-lime        : #{$event-color-lime};
+    --cal-color-yellow      : #{$event-color-yellow};
+    --cal-color-orange      : #{$event-color-orange};
+    --cal-color-deep-orange : #{$event-color-deep-orange};
+    --cal-color-gray        : #{$event-color-gray};
+    --cal-color-gantt-green : #{$event-color-gantt-green};
+
+    --cal-event-color       : #{$dayview-event-bar-color};
+}
+
+//endregion

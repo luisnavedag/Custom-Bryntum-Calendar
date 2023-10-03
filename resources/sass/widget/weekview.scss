@@ -1,0 +1,19 @@
+@import '../variables';
+
+.b-weekview {
+    .b-cal-event-wrap {
+        // Only expand the event if in a weekview and the event is in a cluster
+        &.b-cal-event-reveal.b-cal-in-cluster {
+            // Take over from layout
+            left    : 0 !important;
+            width   : calc(100% + var(--dayview-cell-gutter)) !important;
+            z-index : 3;
+            opacity : 1;
+
+            .b-rtl & {
+                left  : auto!important;
+                right : 0 !important;
+            }
+        }
+    }
+}

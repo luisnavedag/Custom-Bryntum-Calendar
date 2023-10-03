@@ -1,0 +1,120 @@
+@import '../variables';
+
+.b-calendar.b-outer {
+    height : 100%;
+}
+
+.b-calendar, .b-calendar-content {
+    color    : $calendar-foreground-color;
+
+    // The row items are fitted
+    overflow : hidden;
+}
+
+.b-calendar {
+    @include user-select-none();
+
+    &.b-overflow-popup-visible {
+        z-index : $calendar-overflowpopup-visible-z-index;
+    }
+
+    // Nesting required to win over other bundle themes
+    // https://github.com/bryntum/support/issues/2820
+    .b-calendar-view-desc-text {
+        font-size : $calendar-view-desc-font-size;
+    }
+
+    .b-calendar-view-desc-text {
+        color         : $calendar-view-desc-color;
+        overflow      : hidden;
+        white-space   : nowrap;
+        text-overflow : ellipsis;
+    }
+
+    & > * > .b-top-toolbar {
+        border-bottom : $calendar-toolbar-border-bottom;
+
+        > .b-button {
+            margin-inline-end : .25em;
+        }
+    }
+
+    &:not(.b-calendar-nav-toolbar) .b-calendar-toolbar {
+        .b-cal-nav-item {
+            display : none;
+        }
+    }
+
+    &:not(.b-calendar-nav-sidebar) .b-sidebar {
+        .b-cal-nav-item {
+            display : none;
+        }
+    }
+
+    .b-cal-nav-next {
+        margin-left: -$panel-toolbar-gap;
+    }
+
+    &.b-responsive-small {
+        // Desc margin-start is only needed in responsive-small when gap is unset
+        .b-calendar-view-desc {
+            margin-inline-start : $panel-toolbar-gap;
+        }
+
+        .b-calendar-toolbar {
+            > .b-toolbar-content {
+                gap : unset;
+            }
+
+            button:not(.b-pressed) {
+                background-color : transparent;
+                border-color     : transparent;
+            }
+
+            .b-sidebar-toggle {
+                margin-inline-end : 0.5em;
+            }
+
+            .b-calendar-mode-button,
+            .b-calendar-today-button {
+                > label {
+                    display : none;
+                }
+            }
+        }
+    }
+
+    .b-calendar-viewcontainer {
+        // More space at top when used in a Calendar
+        > .b-monthview,
+        > .b-yearview {
+            > .b-panel-body-wrap > .b-panel-content {
+                padding-top : $calendar-view-padding-top;
+            }
+        }
+    }
+
+    &.b-notransition * {
+        transition : none !important;
+    }
+}
+
+.b-panel-ui-calendar-banner {
+    &.b-panel-header {
+        background-color : $panel-toolbar-background-color;
+        color            : $panel-toolbar-color;
+        font-size        : $calendar-view-desc-font-size;
+        padding          : $panel-toolbar-padding;
+        white-space      : nowrap;
+        border-bottom    : $calendar-toolbar-border-bottom;
+
+        .b-header-title {
+            font-size   : unset;
+            font-weight : $widget-font-weight;
+        }
+
+        .b-tool {
+            color : $panel-toolbar-color;
+        }
+    }
+}

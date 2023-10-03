@@ -1,0 +1,40 @@
+.b-dayselector {
+    .b-calendarrow-header-container {
+        border-bottom : 1px solid $calendar-border-color;
+
+        .b-cal-cell-header {
+            &:not(:hover) {
+                div.b-day-name-date {
+                    background-color : inherit;
+                    color            : inherit;
+                }
+            }
+            &.b-selected-date {
+                div.b-day-name-date {
+                    background-color : $eventlist-day-selector-selected-date-background-color;
+                    color            : $eventlist-day-selector-selected-date-color;
+                }
+            }
+        }
+    }
+
+    .b-calendarrow-body {
+        display : none;
+    }
+}
+
+// We are working for a DayView
+.b-dayview-with-dayselector, .b-weekview-with-dayselector {
+    // We have the time axis to clear on the left
+    .b-calendarrow-header-container {
+        border-inline-start : $dayview-split-width solid $dayview-border-color;
+        margin-inline-start : var(--time-axis-width);
+    }
+
+    // If there are no all day events don't let the two borders create a double border
+    &:not(.b-has-allday-events) {
+        .b-calendarrow-header-container {
+            border-bottom-width : 0;
+        }
+    }
+}

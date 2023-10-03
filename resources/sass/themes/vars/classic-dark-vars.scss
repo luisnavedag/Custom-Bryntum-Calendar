@@ -1,0 +1,57 @@
+@import '../../../scheduler-sass/themes/vars/classic-dark-vars';
+
+$calendar-toolbar-border-bottom                : none;
+
+$calendar-background-color                     : #222;
+$calendar-foreground-color                     : #c0c1c2;
+
+$calendar-border-color                         : #393939;
+$dayview-half-hour-line-color                  : #333;
+
+$calendar-date-hover-background-color          : #444;
+$calendar-nonworking-day-background-color      : #36363666;
+
+// When it's in a dark themed AgendaView, it must be solid.
+// This is so that sticky date blocks occlude scrolling content.
+// By default, its a transparent colour, so that when applied in a DayView
+// the background shows through. This is not desirable in AgendaView
+$agendaview-nonworking-day-background-color    : #2b2b2b;
+
+$calendar-other-month-foreground-color         : #444;
+$calendar-cell-overflow-hover-background-color : #444;
+$calendar-cell-overflow-color                  : #ddd;
+
+$dayview-event-color                           : $calendar-foreground-color;
+$dayview-event-body-background-color           : rgba(0, 0, 0, 0.6);
+$dayview-event-hover-body-background-color     : rgba(0, 0, 0, 0.4);
+$dayview-event-selected-body-background-color  : rgba(0, 0, 0, 0.3);
+
+$dayview-timeaxis-background-color             : $panel-background-color;
+
+$monthview-cell-header-color                   : darken($calendar-foreground-color, 20%);
+
+// Hovering the row toggle tool shows circle of this colour.
+$monthview-weekrow-toggle-tool-hover-color      : rgba(10, 10, 10, 0.2);
+
+
+$yearview-week-cell-background-color           : $calendar-nonworking-day-background-color;
+$yearview-day-cell-color                       : $calendar-foreground-color;
+$yearview-1-to-3-events-color                  : #F57F1799;
+$yearview-4-to-6-events-color                  : #E6510099;
+$yearview-7-or-more-events-color               : #B71C1C99;
+$yearview-tentative-event-color                : #1B5E2099;
+$yearview-tentative-event-color2               : #33691E99;
+$yearview-events-hover-blend-mode              : color-dodge;
+
+$cal-intraday-event-color                      : $calendar-foreground-color;
+$cal-intraday-event-hover-background           : linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)) currentColor;
+
+$calendar-sidebar-datepicker-selected-week-border-color     : #aaa;
+$calendar-sidebar-datepicker-selected-week-background-color : #444;
+
+
+/**
+ * DayResourceView styles
+ */
+ $dayresourcecalendarrow-border-color : #555 !default
+

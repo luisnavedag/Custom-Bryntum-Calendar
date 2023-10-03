@@ -1,0 +1,200 @@
+.b-resourceview {
+    align-items : stretch;
+
+    .b-cal-widget-settings-button {
+        display : none;
+    }
+}
+
+.b-resourceview-content {
+    flex-flow   : row nowrap;
+    align-items : stretch;
+    padding     : 0;
+
+    > * {
+        flex              : 1 0 0;
+        margin-inline-end : 0.5em;
+
+        &.b-resourceview-resource {
+            min-width : var(--resource-width);
+        }
+
+        &.b-filtered-hiding {
+            min-width  : 0;
+            width      : 0;
+            flex       : none;
+            border     : 0 none;
+            transition : width 0.3s;
+        }
+
+        &:last-child,
+        &.b-last-resource-view {
+            margin-inline-end : 0;
+        }
+    }
+
+    .b-panel-header {
+        background-color : $dayview-background-color;
+        border           : 1px solid $dayview-border-color;
+        border-block     : none;
+        border-radius    : 0;
+        color            : $monthview-cell-color;
+        height           : $resourceview-header-height;
+    }
+
+    .b-dayview.b-first-resource-view > .b-panel-header {
+        border-inline-start : none;
+    }
+
+    > .b-dayview.b-resource-dayview-timeaxis {
+        // Time axis is docked at the left
+        position         : sticky;
+        left             : 0;
+
+        .b-rtl & {
+            left  : auto;
+            right : 0;
+        }
+
+        background-color : $dayview-timeaxis-background-color;
+        z-index          : 1;
+        border-inline-end     : 1px solid $dayview-border-color;
+
+        .b-dayview-day-container {
+            display : none;
+        }
+    }
+
+    > .b-dayview {
+        // Time axis has a border-right, so the first DayView needs no border-inline-starts
+        &.b-first-resource-view {
+            .b-dayview-schedule-container, .b-dayview-day-container {
+                border-inline-start : 0 none;
+            }
+        }
+        &.b-last-resource-view {
+            .b-panel-header {
+                border-inline-end: 0 none;
+            }
+        }
+
+        &.b-resource-dayview-scroller {
+            // Scroller is docked at the right
+            position         : sticky;
+            right            : 0;
+
+            .b-rtl & {
+                right : auto;
+                left  : 0;
+            }
+
+            background-color : $dayview-background-color !important;
+            z-index          : 1;
+
+            .b-dayview-timeaxis-time, .b-dayview-allday-row-start {
+                display : none;
+            }
+
+            .b-dayview-day-container {
+                visibility : hidden;
+            }
+
+            .b-timeaxis-container {
+                max-width   : 1px;
+                margin-inline-start : -1px;
+            }
+
+            border-inline-start : $dayview-split-width solid $dayview-border-color;
+
+            .b-yscroll-pad {
+                visibility : hidden;
+            }
+        }
+
+        &:not(.b-resource-dayview-timeaxis):not(.b-resource-dayview-scroller) {
+            &:not(.b-last-resource-view) {
+                .b-dayview-day-container, .b-dayview-schedule-container {
+                    border-inline-end : $dayview-split-width solid $dayview-border-color;
+                }
+            }
+
+            .b-dayview-allday-row-start, .b-timeaxis-container {
+                display : none;
+            }
+        }
+
+        &.b-resource-dayview-timeaxis,
+        &.b-resource-dayview-scroller {
+            //background-color : transparent;
+            flex              : 0 0 auto;
+            margin-inline-end : 0;
+
+            // The time axis and the scrollbar must hide their header
+            .b-dayview-header {
+                visibility     : hidden;
+                padding-inline : 0;
+            }
+
+            // This must not be display : none because it provides height
+            .b-dayview-schedule-container {
+                display   : flex;
+                max-width : 0;
+                border    : 0 none;
+            }
+        }
+    }
+
+    .b-dayview-day-container {
+        overscroll-behavior: auto
+    }
+
+    .b-monthview-content {
+        padding-top : 0;
+
+        .b-calendar-weekdays {
+            padding       : 0.5em 0;
+            border-inline : 1px solid $dayview-border-color;
+
+            .b-calendar-day-header {
+                padding-bottom : 0;
+            }
+        }
+    }
+
+    // Covers both EventList and AgendaView
+    > .b-eventlist > .b-panel-body-wrap {
+        border-inline : 1px solid $dayview-border-color;
+    }
+}
+
+.b-resourceview-title {
+    display     : grid;
+    column-gap  : 1em;
+    align-items : center;
+
+    .b-resource-avatar-container {
+        font-size : 1.2em;
+    }
+
+    &.b-has-meta .b-resource-avatar-container {
+        grid-row : 1 / span 2;
+    }
+
+    .b-resource-avatar {
+        border : 1px solid currentColor;
+    }
+
+    .b-resource-name,
+    .b-resource-meta {
+        grid-column : 2;
+    }
+
+    .b-resource-name {
+        font-size : 1.1em;
+    }
+
+    .b-resource-meta {
+        font-size   : .7em;
+        font-weight : 400;
+    }
+}

@@ -1,0 +1,280 @@
+@use "sass:math";
+@import '../scheduler-sass/variables';
+
+//
+// Calendar-wide values which each view type may use
+//
+
+// Background color for normal days
+$calendar-background-color                      : #fff !default;
+
+// Background color for non working days.
+// This must be a transparent colour so that in a DayView, the background lines show through.
+// At the AgendaView level, for dark themes, there must be a visually equivalent solid
+// colour defined as the $agendaview-nonworking-day-background-color so that the
+// sticky date block occludes scrolling content.
+$calendar-nonworking-day-background-color       : #f3f4f566 !default;
+
+// When in an agenda view, it must be visually equivalent but with no transparency
+// so that when position:sticky;top:0, it occludes scrolling content.
+$agendaview-nonworking-day-background-color     : #fafbfb !default;
+
+// Foreground (text) color in calendar widget data cells
+$calendar-foreground-color                      : #606060 !default;
+$calendar-foreground-font-weight                : 400 !default;
+
+$calendar-other-month-foreground-color          : #aaa !default;
+
+$calendar-toolbar-border-bottom                 : 1px solid #ddd !default;
+$calendar-border-color                          : #ddd !default;
+
+$calendar-event-bar-color                       : #59b53b !default;
+$calendar-event-bar-focused-color               : green !default;
+$calendar-event-bar-padding-start               : .3em !default;
+
+$calendar-cell-overflow-color                   : #888 !default;
+$calendar-cell-overflow-hover-background-color  : #dcdce2 !default;
+$calendar-cell-overflow-hover-color             : null !default;
+$calendar-cell-overflow-hover-border-radius     : 4px !default;
+
+$calendar-date-hover-background-color           : #f0f0f0 !default;
+
+$calendar-week-cell-background-color            : null !default;
+$calendar-week-cell-color                       : #777 !default;
+$calendar-week-cell-hover-background-color      : $calendar-date-hover-background-color !default;
+$calendar-week-cell-hover-color                 : null !default;
+$calendar-week-cell-hover-border-radius         : 3px !default;
+
+$calendar-today-background-color                : #5fa2dd !default;
+$calendar-today-hover-background-color          : scale-color($calendar-today-background-color, $lightness : -20%) !default;
+$calendar-today-color                           : #fff !default;
+$calendar-today-font-weight                     : bold !default;
+
+$calendar-view-desc-color                       : null !default;
+$calendar-view-desc-font-size                   : 1.4em !default;
+
+// Space at top for all Calendar views.
+$calendar-view-padding-top                      : 1.2em !default;
+
+// Boost the Calendar's stacking position while an overflow popup is visible
+// so that if it overflows the bounds of the Calendar element, it sits above
+// surrounding static elements.
+$calendar-overflowpopup-visible-z-index         : 10;
+
+//
+// Values for each view type which may use or override the calendar-wide values.
+//
+$monthview-background-color                     : $calendar-background-color !default;
+$monthview-border-width                         : 1px !default;
+$monthview-cell-border-width                    : 1px !default;
+$monthview-border-style                         : solid !default;
+$monthview-border-color                         : $calendar-border-color !default;
+$monthview-event-padding                        : 1px !default;
+$monthview-padding                              : 0.6em 0 0 0 !default;
+
+// Text color in weekday header cells
+$monthview-header-cell-color                    : $calendar-foreground-color !default;
+// Text color in weekday header cells for weekends
+$monthview-header-cell-weekend-color            : $red !default;
+
+// Week number cell, when visible
+$monthview-week-cell-background-color           : $calendar-week-cell-background-color !default;
+$monthview-week-cell-color                      : $calendar-week-cell-color !default;
+$monthview-week-cell-hover-background-color     : $calendar-week-cell-hover-background-color !default;
+$monthview-week-cell-hover-color                : $calendar-week-cell-hover-color !default;
+$monthview-week-cell-hover-border-radius        : $calendar-week-cell-hover-border-radius !default;
+$monthview-week-column-width                    : 2em !default;
+
+// Hovering the row toggle tool shows circle of this colour.
+$monthview-weekrow-toggle-tool-hover-color      : rgba(90, 90, 90, 0.2) !default;
+
+// Cell header
+$monthview-cell-header-padding                  : 1px 0.2em 0.1em 0.2em !default;
+$monthview-cell-header-background-color         : null !default;
+$monthview-cell-header-color                    : #3c4043 !default;
+$monthview-cell-header-hover-background-color   : $calendar-date-hover-background-color !default;
+$monthview-cell-header-hover-color              : null !default;
+$monthview-cell-header-hover-border-radius      : 3px !default;
+$monthview-cell-header-week-color               : $calendar-week-cell-color;
+$monthview-cell-header-content-height           : 2em !default;
+$monthview-cell-header-daynum-font-size         : 0.9em !default;
+
+// Calculated from the above two values
+$monthview-cell-header-dayname-height           : 1.8em !default;
+
+// Text color in day cells
+$monthview-cell-color                           : $calendar-foreground-color !default;
+// Text color in day cells for weekends
+$monthview-cell-weekend-color                   : $calendar-foreground-color !default;
+// Text color in day cells for days not in current month
+$monthview-cell-other-month-color               : $calendar-other-month-foreground-color !default;
+
+// Day number label in "today" cell
+$monthview-today-daynum-background-color        : $calendar-today-background-color !default;
+$monthview-today-daynum-color                   : $calendar-today-color !default;
+$monthview-today-daynum-font-weight             : $calendar-today-font-weight !default;
+
+$monthview-nonworking-day-background-color      : $calendar-nonworking-day-background-color !default;
+
+$monthview-event-bar-font-size                  : 0.9em !default;
+
+$agendaview-nonworking-day-background-color     : $calendar-nonworking-day-background-color !default;
+$agendaview-cell-color                          : $calendar-foreground-color !default;
+$agendaview-cell-padding                        : 1.5em 0 !default;
+$agendaview-date-width                          : 14em !default;
+$agendaview-time-width                          : 12em !default;
+$agendaview-time-width-small                    : 7.5em !default;
+$agendaview-date-padding                        : .2em 1em 0 1em !default;
+$agendaview-date-number-margin                  : 0 .1em 0 0 !default;
+$agendaview-date-number-font-size               : 3em !default;
+$agendaview-today-date-number-font-size         : 75%;
+$agendaview-header-padding                      : .5em 0 .5em .5em !default;
+$agendaview-date-margin                         : null !default;
+
+$eventlist-day-selector-selected-date-background-color : $calendar-today-background-color !default;
+$eventlist-day-selector-selected-date-color            : $calendar-today-color !default;
+$eventlist-event-column-resource-row-gap               : 0.3em;
+
+// Event bar roundness
+$cal-event-border-radius                        : 4px !default;
+
+// Events which are all day, or span multi days.
+$cal-allday-event-background-color              : $calendar-event-bar-color !default;
+$cal-allday-event-color                         : #fdfdfd !default;
+
+// Events which are within a day
+$cal-intraday-event-background-color            : null !default;
+$cal-intraday-event-color                       : #606060 !default;
+$cal-intraday-event-hover-color                 : #dcdce2 !default;
+$cal-intraday-event-hover-background            : linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)) currentColor !default;
+
+$cal-focused-event-background-color             : $calendar-event-bar-focused-color !default;
+$cal-focused-event-color                        : #fff !default;
+$cal-selected-event-background-color            : $calendar-event-bar-focused-color !default;
+$cal-selected-event-color                       : #fff !default;
+$cal-event-bar-gap                              : 0.3em !default;
+$cal-event-icon-font-size                       : 0.7em !default;
+
+// The OverflowPopup
+$overflow-popup-border-radius                   : 3px;
+
+/**
+ *
+ * The DayView. Days are vertical stack of hours in which intra day events are rendered.
+ * A DayView can show a single of many days side by side.
+ *
+ */
+$dayview-nonworking-day-background-color        : $calendar-nonworking-day-background-color !default;
+$dayview-background-color                       : $calendar-background-color !default;
+$dayview-foreground-color                       : $calendar-foreground-color !default;
+$dayview-timeaxis-background-color              : $dayview-background-color !default;
+$dayview-half-hour-line-color                   : #f0f0f0 !default;
+$dayview-border-color                           : $calendar-border-color !default;
+$dayview-event-color                            : #606060 !default;
+$dayview-event-bar-color                        : $calendar-event-bar-color !default;
+$dayview-event-body-padding                     : .3em .5em 0 !default;
+$dayview-event-body-margin                      : 0 0 0 .25em !default;
+$dayview-event-body-background-color            : rgba(255, 255, 255, 0.9) !default;
+$dayview-event-hover-body-background-color      : rgba(255, 255, 255, 0.7) !default;
+$dayview-event-selected-body-background-color   : rgba(255, 255, 255, 0.6) !default;
+$dayview-event-border-radius                    : 0 !default;
+$dayview-inset-background-color                 : scale_color($dayview-nonworking-day-background-color, $lightness : 5%) !default;
+$dayview-time-indicator-color                   : $red !default;
+$dayview-today-background-color                 : null !default;
+$dayview-time-axis-color                        : scale_color($dayview-foreground-color, $lightness : 50%) !default;
+// Should stand out more than tick lines and minor ticks
+$dayview-time-axis-hour-color                   : darken($dayview-time-axis-color, 20%) !default;
+$dayview-outside-core-hours-color               : rgba(135, 135, 135, 0.1) !default;
+$dayview-allday-height-transition-duration      : 300ms !default;
+
+// The width of the border between the time axis and the day columns
+$dayview-split-width                            : 1px !default;
+$dayview-event-name-line-height                 : 1.4 !default;
+
+$yearview-font-size                             : .9em !default;
+$yearview-font-size-big                         : 1.3em !default;
+$yearview-foreground-font-weight                : 300 !default;
+$yearview-background-color                      : $calendar-background-color !default;
+$yearview-foreground-color                      : $calendar-foreground-color !default;
+
+$yearview-row-gap                               : 3em !default;
+$yearview-column-gap                            : 1em !default;
+$yearview-content-padding                       : $panel-content-padding !default;
+$yearview-day-cell-size                         : 2em !default;
+$yearview-day-cell-color                        : #333 !default;
+$yearview-month-max-width                       : 20em !default;
+$yearview-month-min-width                       : 16em !default;
+$yearview-month-name-font-size                  : 1.3em !default;
+$yearview-month-name-max-width                  : #{math.div($yearview-month-max-width, $yearview-month-name-font-size)}em !default;
+
+// Month name cell
+$yearview-monthname-cell-background-color       : null !default;
+$yearview-monthname-cell-color                  : $calendar-week-cell-color !default;
+$yearview-monthname-cell-hover-background-color : $calendar-week-cell-hover-background-color !default;
+$yearview-monthname-cell-hover-color            : $calendar-week-cell-hover-color !default;
+
+// Week number cell, when visible
+$yearview-week-cell-background-color            : #f1f3f4 !default;
+$yearview-week-cell-color                       : $calendar-week-cell-color !default;
+$yearview-week-cell-hover-background-color      : $calendar-week-cell-hover-background-color !default;
+$yearview-week-cell-hover-color                 : $calendar-week-cell-hover-color !default;
+
+// day cells
+$yearview-cell-background-color                 : null !default;
+$yearview-cell-color                            : $calendar-foreground-color !default;
+$yearview-cell-hover-background-color           : $calendar-week-cell-hover-background-color !default;
+$yearview-cell-hover-color                      : null !default;
+
+// Day number label in "today" cell
+$yearview-today-cell-background-color           : $calendar-today-background-color !default;
+$yearview-today-cell-color                      : $calendar-today-color !default;
+$yearview-today-cell-font-weight                : $calendar-today-font-weight !default;
+
+
+$yearview-other-month-cell-color                : $calendar-other-month-foreground-color !default;
+
+$yearview-1-to-3-events-color                   : #f9f69e !default;
+$yearview-4-to-6-events-color                   : #f9d49e !default;
+$yearview-7-or-more-events-color                : #f9bdb3 !default;
+$yearview-tentative-event-color                 : #19fd09 !default;
+$yearview-tentative-event-color2                : #79d59f !default;
+$yearview-events-hover-blend-mode               : multiply !default;
+
+$yearview-dragproxy-background                  : linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)) currentColor !default;
+
+$resourceview-header-height                     : 4.5em !default;
+
+// When used in event bars to make it stand out
+$resource-avatar-border-width                   : 1px !default;
+$resource-avatar-border-color                   : #fff !default;
+
+/*
+ * Calendar View styles
+ *
+ */
+
+// The DatePicker in the sidebar
+$calendar-sidebar-datepicker-font-size                      : .85em;
+$calendar-sidebar-datepicker-cell-size                      : 2em !default;
+$calendar-sidebar-datepicker-cell-margin                    : 0.1em 0.24em !default;
+$calendar-sidebar-datepicker-color                          : null !default;
+$calendar-sidebar-datepicker-header-color                   : null !default;
+$calendar-sidebar-datepicker-weekdays-color                 : null !default;
+$calendar-sidebar-datepicker-weekdays-background-color      : transparent !default;
+$calendar-sidebar-datepicker-selected-week-border-color     : $calendar-today-background-color !default;
+$calendar-sidebar-datepicker-selected-week-background-color : lighten($calendar-today-background-color, 30%) !default;
+
+/*
+ * Calendar header row styles
+ *
+ */
+
+$calendarrow-nonworking-day-background-color    : transparent !default;
+
+$cal-timerange-header-color : rgba($lime, 0.5) !default;
+$cal-timerange-footer-color : $cal-timerange-header-color !default;
+
+/**
+ * DayResourceView styles
+ */
+$dayresourcecalendarrow-border-color : #c1c1c1 !default

@@ -1,0 +1,10 @@
+@import '../../../scheduler-sass/themes/vars/material-vars';
+
+$calendar-foreground-color      : #606060;
+$calendar-week-cell-color       : #777;
+
+$calendar-view-desc-color       : $calendar-foreground-color;
+
+$calendar-datepicker-color          : $calendar-foreground-color;
+$calendar-datepicker-header-color   : $calendar-datepicker-color;
+$calendar-datepicker-weekdays-color : $calendar-week-cell-color;

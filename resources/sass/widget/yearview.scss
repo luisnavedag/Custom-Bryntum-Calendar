@@ -1,0 +1,262 @@
+.b-yearview-content {
+    flex-basis           : 0;
+    display              : flex;
+    flex-flow            : row wrap;
+    align-content        : flex-start;
+    justify-content      : space-around;
+    font-size            : $yearview-font-size;
+    font-weight          : $yearview-foreground-font-weight;
+    padding              : $yearview-content-padding;
+    column-gap           : $yearview-column-gap;
+    row-gap              : $yearview-row-gap;
+    padding-inline-start : max((25% - #{$yearview-month-max-width + $yearview-row-gap}) - #{$yearview-content-padding * 2}, #{$yearview-content-padding});
+
+    // Cells a bit taller when showing dots
+    &.b-show-events-dots .b-calendar-cell {
+        height : 2.3em;
+    }
+
+    &.b-show-events-count {
+        .b-cell-events-badge {
+            position          : absolute;
+            inset-block-start : 1.6EM;
+            display           : flex;
+            align-items       : center;
+            justify-content   : center;
+            border-radius     : 50%;
+            flex-shrink       : 0;
+            font-size         : $datepicker-cell-badge-font-size;
+            background-color  : $datepicker-cell-badge-background-color;
+            color             : $datepicker-cell-badge-color;
+            width             : $datepicker-cell-badge-size;
+            height            : $datepicker-cell-badge-size;
+            transform         : $datepicker-cell-badge-transform;
+        }
+    }
+
+    .b-yearview-body-wrap & {
+        background-color : $yearview-background-color;
+        color            : $yearview-foreground-color;
+    }
+
+    .b-yearview.b-responsive-small & {
+        font-size : $yearview-font-size-big;
+    }
+
+    .b-yearview-month {
+        flex-basis : calc(25% - #{$yearview-column-gap});
+        min-width  : $yearview-month-min-width;
+        display    : flex;
+        flex-flow  : column nowrap;
+        height     : min-content;
+    }
+
+    .b-yearview-month-name {
+        margin-bottom    : .4em;
+        padding          : 0.1em 0 0.2em 0.3em;
+        font-size        : $yearview-month-name-font-size;
+        color            : $yearview-monthname-cell-color;
+        background-color : $yearview-monthname-cell-background-color;
+        max-width        : $yearview-month-name-max-width;
+        border           : 0 none;
+        text-align       : start;
+        background-color : transparent;
+        font-family      : inherit;
+        font-weight      : inherit;
+
+        &:hover {
+            cursor           : pointer;
+            background-color : $yearview-monthname-cell-hover-background-color;
+            color            : $yearview-monthname-cell-hover-color;
+        }
+    }
+
+    .b-calendar-weekdays {
+        height : 2.1em;
+    }
+
+    .b-yearview.b-responsive-small & .b-calendar-week {
+        // TODO toggling on/off in debugger doesn't seem to have any effect
+        max-width : 100%;
+    }
+
+    .b-calendar-week {
+        display   : flex;
+        flex-flow : row nowrap;
+        max-width : $yearview-month-max-width;
+
+        // Extra space below the last week.
+        // This value is subtracted from the month bottom margin.
+        // This is needed because of margin collapsing. Without this, the
+        // last row of month blocks would touch the bottom of the content element.
+        &:last-child {
+            margin-bottom : bottom($yearview-content-padding);
+        }
+
+        > * {
+            flex            : 1 1 auto;
+            display         : flex;
+            justify-content : center;
+            align-items     : center;
+        }
+    }
+
+    .b-yearview-weekday-cell {
+        color : $yearview-day-cell-color;
+    }
+
+    &.b-hide-week-numbers {
+        .b-week-number-cell {
+            display : none;
+        }
+    }
+
+    .b-cal-cell-overflow {
+        &.b-active {
+            outline    : 0 none;
+            opacity    : 1 !important;
+            z-index    : 10 !important;
+            box-shadow : 5px 5px 10px rgba(0, 0, 0, 0.2), -5px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        &:hover {
+            background-color : inherit;
+        }
+    }
+
+    &:not(.b-draggable-active) {
+        .b-calendar-cell {
+            &.b-datepicker-1-to-3-events:hover,
+            &.b-datepicker-4-to-6-events:hover,
+            &.b-calendar-7-or-more-events:hover {
+                border-radius : 0;
+
+                .b-calendar-cell-inner {
+                    mix-blend-mode : $yearview-events-hover-blend-mode;
+                }
+            }
+
+            &.b-datepicker-1-to-3-events:hover {
+                .b-calendar-cell-inner {
+                    background-color : $yearview-1-to-3-events-color;
+                }
+            }
+
+            &.b-datepicker-4-to-6-events:hover {
+                .b-calendar-cell-inner {
+                    background-color : $yearview-4-to-6-events-color;
+                }
+            }
+
+            &.b-calendar-7-or-more-events:hover {
+                .b-calendar-cell-inner {
+                    background-color : $yearview-7-or-more-events-color;
+                }
+            }
+
+            .b-calendar-cell-inner:hover {
+                cursor           : pointer;
+                background-color : $yearview-cell-hover-background-color;
+                color            : $yearview-cell-hover-color;
+            }
+        }
+    }
+
+    &.b-show-events-heatmap {
+        .b-datepicker-1-to-3-events {
+            background-color : $yearview-1-to-3-events-color;
+        }
+
+        .b-datepicker-4-to-6-events {
+            background-color : $yearview-4-to-6-events-color;
+        }
+
+        .b-calendar-7-or-more-events {
+            background-color : $yearview-7-or-more-events-color;
+        }
+    }
+
+    .b-calendar-cell {
+        &.b-cal-tentative-event {
+            background-color : $yearview-tentative-event-color;
+
+            &.b-other-month {
+                background-color : $yearview-tentative-event-color2;
+            }
+        }
+
+        // Absolutely positioned .b-cal-minimal-event-container is relative to this element
+        position : relative;
+
+        // Event dots start just below the day number
+        .b-cal-minimal-event-container {
+            top: 1.7em;
+        }
+
+        .b-calendar-cell-inner {
+            height           : $yearview-day-cell-size;
+            width            : $yearview-day-cell-size;
+            flex-shrink      : 0;
+            display          : flex;
+            align-items      : center;
+            justify-content  : center;
+            border-radius    : 50%;
+            background-color : $yearview-cell-background-color;
+            //color            : $yearview-cell-color;
+        }
+
+        &.b-today {
+            .b-calendar-cell-inner {
+                border-radius    : 50%;
+                background-color : $yearview-today-cell-background-color;
+                color            : $yearview-today-cell-color;
+                font-weight      : $yearview-today-cell-font-weight;
+            }
+        }
+
+        &.b-other-month {
+            .b-calendar-cell-inner {
+                color : $yearview-other-month-cell-color;
+            }
+        }
+    }
+
+    .b-week-number-cell {
+        flex             : 0 0 $yearview-day-cell-size;
+        background-color : $yearview-week-cell-background-color;
+        color            : $yearview-week-cell-color;
+        border           : 0 none;
+        padding          : 0;
+        font-family      : inherit;
+        font-weight      : inherit;
+        font-size        : inherit;
+
+        &:hover {
+            cursor           : pointer;
+            background-color : $yearview-week-cell-hover-background-color;
+            color            : $yearview-week-cell-hover-color;
+        }
+    }
+
+    .b-calendar-cell, .b-week-number-cell {
+        &.b-active {
+            outline          : 0 none;
+            background-color : #e8e8e8;
+            border-radius    : 50%;
+        }
+    }
+
+    // When we're hiding non working days, make them display : none
+    &.b-hide-nonworking-days {
+        .b-nonworking-day {
+            display : none;
+        }
+    }
+
+    // In the header, which does not have a week, no background colour
+    .b-calendar-week:not([data-week]) {
+        .b-week-number-cell {
+            background-color : inherit;
+        }
+    }
+}

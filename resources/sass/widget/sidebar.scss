@@ -1,0 +1,171 @@
+@import '../variables';
+
+.b-sidebar {
+    flex  : 1 0 auto;
+    width : min-content;
+
+    .b-sidebar-content {
+        // Use more specific rule to override default panel content flow
+        &.b-panel-content {
+            flex-flow       : column nowrap;
+            justify-content : flex-start;
+            padding         : 1em;
+        }
+        align-items      : stretch;
+        gap              : 1em;
+    }
+
+    .b-sidebar-body-wrap > .b-toolbar {
+        background-color : $calendar-background-color;
+    }
+}
+
+// Nesting required to win over other bundle themes
+// https://github.com/bryntum/support/issues/2820
+.b-calendar {
+    .b-sidebar {
+        // Flex-basis is auto, and the List items in the Resources widget are white-space:nowrap
+        // So we need to limit how much space we can steal from the calendar content.
+        max-width : 30%;
+
+        // Prevent the DatePicker from being crushed into a bad UX.
+        // This is an optimum width in which to lay out the DatePicker.
+        &:not(.b-collapsed):not(.b-collapsing).b-has-datepicker {
+            min-width : 17.5em;
+
+            // When there are event badges, the cells are fatter.
+            &.b-datepicker-with-events {
+                min-width : 20em;
+            }
+        }
+
+        &.b-sidebar-left {
+            order : 0;
+        }
+
+        &.b-sidebar-right {
+            order : 10;
+        }
+    }
+
+    .b-sidebar-content {
+        // Background color must be inherited from theme.
+        // Only Calendar modes may diverge from theme.
+        color            : $calendar-foreground-color;
+
+        // It fits the vertically flexed items.
+        // So the resource filter will have its flex-shrink used.
+        overflow         : hidden;
+
+        // DatePicker is compact in a Cal Sidebar
+        .b-datepicker {
+            // Must not lose height.
+            // Other items should have flex-shrink set.
+            flex-shrink   : 0;
+
+            // Compress toolbar a little unless its with events, in which case it's as regular DatePicker
+            &:not(.b-datepicker-with-events) {
+                .b-toolbar.b-dock-top .b-toolbar-content {
+                    // Important needed to override toolbar's CSS
+                    padding-inline : 0 !important;
+                    gap            : 0;
+                }
+            }
+
+            .b-toolbar {
+                color      : $calendar-sidebar-datepicker-header-color;
+                background : transparent;
+                // Override Stockholm theme's datepicker font size
+                font-size   : 1em;
+
+                .b-datepicker-yearbutton,
+                .b-datepicker-monthfield {
+                    font-weight : 500;
+                }
+
+                .b-field, .b-button {
+                    color : $calendar-sidebar-datepicker-header-color;
+                }
+            }
+
+            .b-calendar-cell {
+                flex     : 0 0 $calendar-sidebar-datepicker-cell-size;
+                padding  : 0;
+                margin   : $calendar-sidebar-datepicker-cell-margin;
+
+                .b-datepicker-cell-inner {
+                    height : $calendar-sidebar-datepicker-cell-size;
+                    width  : $calendar-sidebar-datepicker-cell-size;
+                }
+            }
+        }
+
+        .b-calendar-weekdays {
+            color     : $calendar-sidebar-datepicker-weekdays-color;
+            font-size : .9em;
+        }
+
+        .b-calendar-weekdays {
+            border-bottom : none;
+        }
+
+        .b-datepicker-month {
+            margin-inline-end : 0.5em;
+        }
+
+        .b-datepicker-content {
+            font-size  : $calendar-sidebar-datepicker-font-size;
+            color      : $calendar-sidebar-datepicker-color;
+            background : transparent;
+
+            .b-week-number-cell {
+                line-height : $calendar-sidebar-datepicker-cell-size;
+                width       : $calendar-sidebar-datepicker-cell-size;
+                margin      : $calendar-sidebar-datepicker-cell-margin;
+            }
+
+            .b-calendar-weekdays {
+                background : $calendar-sidebar-datepicker-weekdays-background-color;
+            }
+        }
+
+        .b-resourcefilter {
+            // This is the component that yields height.
+            // The date picker above it is fixed.
+            flex-shrink : 1;
+
+            .b-list-item {
+                padding:0.5em 0.5em 0.5em 0;
+            }
+
+            .b-icon {
+                margin-inline-end : 0.8em;
+
+                &:before {
+                    font-size : 150%;
+                }
+            }
+        }
+
+        .b-field {
+            // Must not lose height.
+            // Other items should have flex-shrink set.
+            flex : 0 0 auto;
+
+            // Make fields fit width
+            width      : auto;
+
+            // Override form-type aligning from field.scss of align : flex-start
+            align-self : auto;
+
+            // Input field must obey the flex rules of the field.
+            input[type="text"] {
+                width : 0;
+            }
+        }
+
+        .b-list {
+            background-color : transparent;
+        }
+    }
+}

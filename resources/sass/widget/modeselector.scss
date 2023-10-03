@@ -1,0 +1,25 @@
+.b-calendar-fullweek-button {
+    margin-inline-end: 1em;
+
+    .b-calendar:not(.b-calendar-include-weekends-button) & {
+        display : none;
+    }
+}
+
+.b-modeselector {
+    // handy https://blog.logrocket.com/understanding-min-content-max-content-fit-content-css/
+    flex-basis  : min-content;
+    flex-shrink : 0;
+
+    &.b-minified {
+        > :not(.b-calendar-mode-button) {
+            display : none;
+        }
+    }
+
+    &:not(.b-minified) {
+        > .b-calendar-mode-button {
+            display : none;
+        }
+    }
+}

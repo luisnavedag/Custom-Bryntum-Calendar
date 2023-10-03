@@ -1,0 +1,176 @@
+@import '../variables';
+
+.b-agendaview {
+    // Sticky date block.
+    &.b-gridbase.b-enable-sticky {
+        // Need to override a high specificity rule which sets overflow to hidden.
+        .b-grid-subgrid.b-grid-horizontal-scroller {
+            overflow : visible !important;
+        }
+
+        // Obviously, with overflow:visible it cannot do its horizontal scrolling
+        // So its fake scrollbars are always hidden.
+        .b-virtual-scrollers {
+            display : none !important;
+        }
+
+        .b-cal-agenda-date {
+            position : sticky;
+            top      : top($agendaview-cell-padding) + top($agendaview-date-margin);
+            z-index  : 12;
+        }
+
+        // If we're narrow, it goes at the top.
+        &.b-responsive-small {
+            .b-agendacolumn-cell {
+                padding-top : 0;
+
+                .b-cal-agenda-date {
+                    top              : 0;
+                    min-height       : 4em;
+                    background-color : $calendar-background-color;
+                }
+                &.b-nonworking-day .b-cal-agenda-date {
+                    // This must occlude the scrolling content, so must not be a the transparent colour
+                    // which allows DayView background lines to show through. It must be the solid visual equivalent.
+                    background-color : $agendaview-nonworking-day-background-color;
+                }
+            }
+        }
+    }
+
+    // Make it so that the padding is included in the scrollHeight measuring that we do to auto height the cells.
+    .b-grid-cell::after {
+        content : "";
+        display : table;
+        clear   : both;
+    }
+
+    .b-cal-eventlist-event-time {
+        flex            : 0 0 $agendaview-time-width;
+        min-height      : auto;
+        white-space     : nowrap;
+    }
+
+    &.b-responsive-small {
+        .b-cal-event-bar-container {
+            margin-inline-start: 2em;
+            margin-block-start: 1em;
+        }
+
+        .b-cal-eventlist-event-time {
+            flex : 0 0 $agendaview-time-width-small;
+        }
+
+        .b-cal-agenda-grid-row {
+            .b-calendar-cell {
+                display : block;
+            }
+        }
+    }
+}
+
+.b-agendaview-dayselector {
+    .b-calendarrow-body {
+        display : none;
+    }
+}
+
+.b-cal-agenda-grid-row {
+    // No hover or selection colors for the row
+    &.b-selected,
+    .b-grid-body-container:focus &.b-selected,
+    .b-gridbase &.b-grid-row.b-hover .b-grid-cell.b-calendar-cell,
+    .b-gridbase &.b-grid-row.b-hover .b-grid-cell.b-calendar-cell:not(.b-nonworking-day):hover {
+        background-color : transparent;
+
+        .b-calendar-cell.b-nonworking-day {
+            background-color : $agendaview-nonworking-day-background-color;
+        }
+    }
+
+    .b-calendar-cell {
+        flex        : 1 1 100%;
+        padding     : $agendaview-cell-padding;
+        align-items : flex-start;
+        color       : $agendaview-cell-color;
+
+        &.b-nonworking-day {
+            background-color : $agendaview-nonworking-day-background-color;
+        }
+
+        &:focus-within {
+            outline: 0 none!important;
+        }
+    }
+}
+
+.b-cal-agenda-event-row {
+    flex       : 1;
+    display    : flex;
+    flex-flow  : row nowrap;
+    align-self : stretch;
+
+    &:not(:last-child) {
+        margin-bottom: var(--event-row-spacing);
+    }
+}
+
+.b-grid-cell.b-calendar-cell {
+    font-weight : inherit;
+    .b-agendaview-with-dayselector & {
+        padding-inline-start : 1.5em;
+    }
+}
+
+.b-cal-agenda-date {
+    display     : flex;
+    flex-flow   : row nowrap;
+    flex        : 0 0 $agendaview-date-width;
+    padding     : $agendaview-date-padding;
+    align-items : center;
+    height      : 2.6em;
+    margin      : $agendaview-date-margin;
+
+    .b-agendaview-with-dayselector & {
+        display : none
+    }
+}
+
+.b-cal-agenda-date-date-number {
+    margin          : $agendaview-date-number-margin;
+    font-size       : $agendaview-date-number-font-size;
+    display         : flex;
+    justify-content : center;
+    align-items     : center;
+    cursor          : pointer;
+    width           : 1.5em;
+    height          : 1.5em;
+    border-radius   : 50%;
+
+    &:hover {
+        background-color : $calendar-date-hover-background-color;
+    }
+
+    .b-today & {
+        background-color : $calendar-today-background-color;
+        color            : $calendar-today-color;
+    }
+}
+
+.b-cal-agenda-header {
+    flex            : 1;
+    display         : flex;
+    flex-flow       : row nowrap;
+    justify-content : flex-start;
+    padding         : $agendaview-header-padding;
+}
+
+// The elements inside the AgendaColumn header element must match the date and time inside the agenda.
+.b-cal-agenda-header-date {
+    width : $agendaview-date-width;
+}
+
+.b-cal-agenda-header-time {
+    width : $agendaview-time-width;
+}

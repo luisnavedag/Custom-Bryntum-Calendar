@@ -1,0 +1,16 @@
+.b-dayresourceview-column {
+    display   : flex;
+    flex      : 1 1 100%;
+    min-width : var(--min-day-width);
+    height    : var(--day-height);
+    position  : relative;
+
+    // These cells are resource subcolumns. They must not obey the minDayWidth
+    .b-calendar-cell {
+        min-width : initial;
+    }
+
+    &:not(.b-last-cell) {
+        border-inline-end : $monthview-cell-border-width solid $dayresourcecalendarrow-border-color;
+    }
+}

@@ -1,0 +1,91 @@
+.b-calendar-print-iframe {
+  position : absolute;
+  top      : -1000em;
+  left     : -1000em;
+}
+
+.b-calendar {
+
+  &.b-shrinkwrap-row-heights {
+    .b-print-content {
+      .b-weeks-container {
+        flex : 0 0 auto;
+      }
+    }
+  }
+
+  .b-print-content {
+
+    font-family     : 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    position        : absolute;
+    display         : flex;
+    flex-direction  : column;
+    height          : 100%;
+    width           : 100%;
+
+    .b-print-header {
+      font-size : 1.4em;
+    }
+
+    .b-print-body {
+
+      flex    : 1;
+      display : flex;
+
+      .b-print-viewport {
+
+        display: flex;
+        flex: 1;
+
+        header {
+          display : none;
+        }
+
+        // No padding, the views are not contained.
+        .b-calendarmixin {
+          padding : 0;
+        }
+
+        .b-dayview, .b-weekview, .b-monthview {
+          flex : 1 0 100%;
+
+          .b-monthview-content {
+            padding : 0;
+          }
+        }
+
+        .b-dayview, .b-weekview {
+          .b-expand-allday-button, .b-yscroll-pad {
+            display : none;
+          }
+
+          .b-dayview-day-content {
+            overflow-y : hidden !important;
+          }
+        }
+
+        .b-agendaview {
+          .b-grid-body-container.b-widget-scroller {
+            overflow-y : hidden !important;
+          }
+        }
+
+        .b-yearview {
+          .b-yearview-content {
+            padding    : 0;
+            overflow-y : hidden !important;
+          }
+
+          // We lay out 4 across in print mode, so we know we can kill bottom margin
+          // to ensure content fits within portrait height.
+          .b-yearview-month:nth-child(9),
+          .b-yearview-month:nth-child(10),
+          .b-yearview-month:nth-child(11),
+          .b-yearview-month:nth-child(12) {
+            margin-bottom : 0;
+          }
+        }
+      }
+    }
+  }
+}

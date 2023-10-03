@@ -1,0 +1,103 @@
+.b-dayresourcecalendarrow {
+    .b-dayresourcecalendarrow-column {
+        position  : relative;
+        display   : flex;
+        flex-flow : row;
+        min-width : var(--min-day-width);
+
+        &:not(:last-child) {
+            border-inline-end : $monthview-cell-border-width solid $dayresourcecalendarrow-border-color;
+        }
+
+        .b-resourcecalendarrow-column-resource-cell {
+            flex      : 1 1 100%;
+            display   : flex;
+            flex-flow : column nowrap;
+
+            &:not(:last-child) {
+                border-inline-end : $monthview-cell-border-width solid $dayview-border-color;
+            }
+        }
+
+        .b-cal-event-bar-container {
+            position  : relative;
+        }
+    }
+
+    .b-cal-cell-header {
+        align-items    : stretch;
+        padding-bottom : 0;
+        min-width      : var(--min-day-width);
+
+        &:not(:last-child) {
+            border-inline-end : $monthview-cell-border-width solid $dayresourcecalendarrow-border-color;
+        }
+    }
+
+    .b-dayname-date {
+        display     : flex;
+        flex-flow   : column nowrap;
+        align-items : center;
+        padding     : .5em;
+    }
+
+    .b-day-name, .b-day-date {
+        flex            : 1;
+        display         : flex;
+        justify-content : center;
+    }
+
+    .b-dayresourcecalendarrow-cell-resources {
+        display    : flex;
+        overflow   : hidden;
+        flex-flow  : row nowrap;
+        border-top : $monthview-cell-border-width solid $calendar-border-color;
+    }
+
+    .b-dayresourcecalendarrow-resource-header {
+        min-width       : var(--min-resource-width);
+        display         : flex;
+        gap             : .8em;
+        justify-content : center;
+        align-items     : center;
+        flex            : 1 1 100%;
+        padding-block   : 1em;
+        padding-inline  : 0.5em;
+        overflow        : hidden;
+
+        &.b-avatar-after {
+            .b-resource-avatar {
+                order : 1;
+            }
+        }
+
+        &:not(:last-child) {
+            border-inline-end : $monthview-cell-border-width solid $calendar-border-color;
+        }
+    }
+
+    // Hide the resource avatar is the header cell gets narrow
+    &.b-narrow-resource-header .b-dayresourcecalendarrow-resource-header {
+        .b-resource-avatar {
+            display : none;
+        }
+    }
+
+    .b-dayresourcecalendarrow-resource-name {
+        white-space   : nowrap;
+        text-overflow : ellipsis;
+        overflow      : hidden;
+        line-height   : $avatar-size;
+    }
+
+    // The future bars which, in a continuous CalendarRow are opacity:0 and inactivated
+    // because the main bar starting at the startDate covers it are active in this view.
+    // Each occurrence in each column must be interactive. This rule must not be more specific
+    // because when dragging (b-draggable-started added to view), the events are inactivated
+    // with a rule that applies pointer-events:none
+    .b-cal-event-wrap {
+        max-width      : 100%;
+        opacity        : 1;
+        pointer-events : all;
+    }
+}
