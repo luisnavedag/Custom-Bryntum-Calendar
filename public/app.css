@@ -7,3 +7,7 @@ html {
     font-family: Poppins, "Open Sans", Helvetica, Arial, sans-serif;
     font-size: 14px;
 }
+
+.b-calendar > * > .b-top-toolbar {
+    background: #DCEDFB;
+}

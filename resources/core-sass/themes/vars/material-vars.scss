@@ -3,6 +3,7 @@
 @import '../material/material-colors';
 
 $blue                                    : $blue500;
+$vivid                                    : $vivid500;
 $deep-orange                             : $deeporange500;
 $orange                                  : $orange500;
 $amber                                   : $amber500;
@@ -18,7 +19,7 @@ $dark-gray                               : $gray800 !default;
 $gray                                    : $gray500 !default;
 $light-gray                              : $gray300 !default;
 
-$primary                                 : $blue;
+$primary                                 : $vivid;
 $secondary                               : $orange;
 $main-color                              : $primary;
 
